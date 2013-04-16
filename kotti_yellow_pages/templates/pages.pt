@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      metal:use-macro="api.macro('kotti:templates/view/master.pt')"
+      i18n:domain="kotti_yellow_pages">
+
+  <article metal:fill-slot="content" class="yellowpages-view content">
+    <h1>${context.title}</h1>
+    <p class="description">
+      ${context.description}
+    </p>
+    <div tal:content="structure context.example_attribute | None"></div>
+  </article>
+
+</html>

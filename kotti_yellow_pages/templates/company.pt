@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="api.macro('kotti:templates/view/master.pt')"
+      i18n:domain="kotti_yellow_pages">
+  <head metal:fill-slot="head-more">
+    <script>
+      var latitude = ${context.latitude};
+      var longitude = ${context.longitude};
+    </script>
+  </head>
+  <article metal:fill-slot="content" class="yp-company view">
+    <div class="row">
+      <div class="span6">
+        <h1>${context.title}</h1>
+        <p>
+          ${context.street}<br />
+          ${context.zipcode} ${context.city}
+        </p>
+        <p>
+          <span>Telephone:</span> ${context.telephone}<br />
+          <span>Facsimile:</span> ${context.facsimile}<br />
+        </p>
+        <p>
+          <span>Web:</span>
+          <a href="${context.url}" target="_blank">${context.url}</a><br />
+          <span>Email:</span>
+          <a href="mailto:${context.email}">${context.email}</a>
+        </p>
+      </div>
+      <div id="map" class="span6"></div>
+    </div>
+  </article>
+</html>

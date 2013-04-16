@@ -1,0 +1,133 @@
+<configure xmlns="http://namespaces.repoze.org/bfg"
+  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+  i18n:domain="kotti_yellow_pages">
+  <workflow name="yp_pages" type="security" state_attr="state"
+    initial_state="private"
+    content_types="kotti_yellow_pages.interfaces.IYellowPagesWorkflow"
+    permission_checker="pyramid.security.has_permission">
+    <state name="private"
+      callback="kotti.workflow.workflow_callback">
+      <key name="title" value="_(u'Private')" />
+      <key name="order" value="1" />
+      <key name="inherit" value="0" />
+      <key name="system.Everyone" value="" />
+      <key name="role:viewer" value="view" />
+      <key name="role:editor"
+        value="view add_branch add_company edit state_change" />
+      <key name="role:owner"
+        value="view add_branch add_company edit manage state_change" />
+    </state>
+    <state name="public_closed"
+      callback="kotti.workflow.workflow_callback">
+      <key name="title" value="_(u'Public (closed for submissions)')" />
+      <key name="order" value="2" />
+      <key name="inherit" value="0" />
+      <key name="system.Everyone" value="view" />
+      <key name="role:viewer" value="view" />
+      <key name="role:editor"
+        value="view add_branch add_company edit state_change" />
+      <key name="role:owner"
+        value="view add_branch add_company edit manage state_change" />
+    </state>
+    <state name="public_open"
+      callback="kotti.workflow.workflow_callback">
+      <key name="title" value="_(u'Public (submissions allowed)')" />
+      <key name="order" value="2" />
+      <key name="inherit" value="0" />
+      <key name="system.Everyone" value="view add_company" />
+      <key name="role:viewer" value="view" />
+      <key name="role:editor"
+        value="view add_branch add_company edit state_change" />
+      <key name="role:owner"
+        value="view add_branch add_company edit manage state_change" />
+    </state>
+    <state name="public_reviewed"
+      callback="kotti.workflow.workflow_callback">
+      <key name="title" value="_(u'Public (submissions must be reviewed)')" />
+      <key name="order" value="2" />
+      <key name="inherit" value="0" />
+      <key name="system.Everyone" value="view add_company" />
+      <key name="role:viewer" value="view" />
+      <key name="role:editor"
+        value="view add_branch add_company edit state_change" />
+      <key name="role:owner"
+        value="view add_branch add_company edit manage state_change" />
+    </state>
+    <transition name="private_to_closed" permission="state_change"
+      from_state="private" to_state="public_closed" />
+    <transition name="closed_to_private" permission="state_change"
+      from_state="public_closed" to_state="private" />
+    <transition name="private_to_open" permission="state_change"
+      from_state="private" to_state="public_open" />
+    <transition name="open_to_private" permission="state_change"
+      from_state="public_open" to_state="private" />
+    <transition name="private_to_reviewed" permission="state_change"
+      from_state="private" to_state="public_reviewed" />
+    <transition name="reviewed_to_private" permission="state_change"
+      from_state="public_reviewed" to_state="private" />
+    <transition name="closed_to_reviewed" permission="state_change"
+      from_state="public_closed" to_state="public_reviewed" />
+    <transition name="closed_to_open" permission="state_change"
+      from_state="public_closed" to_state="public_open" />
+    <transition name="reviewed_to_closed" permission="state_change"
+      from_state="public_reviewed" to_state="public_closed" />
+    <transition name="reviewed_to_open" permission="state_change"
+      from_state="public_reviewed" to_state="public_open" />
+    <transition name="open_to_reviewed" permission="state_change"
+      from_state="public_open" to_state="public_reviewed" />
+    <transition name="open_to_closed" permission="state_change"
+      from_state="public_open" to_state="public_closed" />
+  </workflow>
+
+  <workflow name="yp_company" type="security" state_attr="state"
+    initial_state="created"
+    content_types="kotti_yellow_pages.interfaces.IYPCompanyWorkflow"
+    permission_checker="pyramid.security.has_permission">
+    <state name="created"
+      callback="kotti.workflow.workflow_callback">
+      <key name="title" value="_(u'Created')" />
+      <key name="order" value="1" />
+      <key name="inherit" value="0" />
+      <key name="system.Everyone" value="submit" />
+      <key name="role:viewer" value="view" />
+      <key name="role:editor" value="view add edit state_change" />
+      <key name="role:owner" value="view add edit manage state_change" />
+    </state>
+    <state name="pending"
+      callback="kotti.workflow.workflow_callback">
+      <key name="title" value="_(u'Waiting for approval')" />
+      <key name="order" value="1" />
+      <key name="inherit" value="0" />
+      <key name="system.Everyone" value="" />
+      <key name="role:viewer" value="view" />
+      <key name="role:editor" value="view add edit state_change" />
+      <key name="role:owner" value="view add edit manage state_change" />
+    </state>
+    <state name="private"
+      callback="kotti.workflow.workflow_callback">
+      <key name="title" value="_(u'Private')" />
+      <key name="order" value="1" />
+      <key name="inherit" value="0" />
+      <key name="system.Everyone" value="" />
+      <key name="role:viewer" value="view" />
+      <key name="role:editor" value="view add edit state_change" />
+      <key name="role:owner" value="view add edit manage state_change" />
+    </state>
+    <state name="public"
+      callback="kotti.workflow.workflow_callback">
+      <key name="title" value="_(u'Public')" />
+      <key name="order" value="1" />
+      <key name="inherit" value="0" />
+      <key name="system.Everyone" value="view" />
+      <key name="role:viewer" value="view" />
+      <key name="role:editor" value="view add edit state_change" />
+      <key name="role:owner" value="view add edit manage state_change" />
+    </state>
+    <transition name="created_to_pending" permission="submit"
+      from_state="created" to_state="pending" />
+    <transition name="created_to_private" permission="state_change"
+      from_state="created" to_state="private" />
+
+  </workflow>
+</configure>
+
