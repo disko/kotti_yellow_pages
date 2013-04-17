@@ -1,1 +1,1 @@
-app = angular.module('kotti_yellow_pages', ['leaflet-directive']);
+app = angular.module('kotti_yellow_pages', []);

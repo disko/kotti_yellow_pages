@@ -5,6 +5,9 @@
       metal:use-macro="api.macro('kotti:templates/view/master.pt')"
       i18n:domain="kotti_yellow_pages">
 
+  <more metal:fill-slot="head-more">
+    <script>window.context_url = '${request.resource_url(context)}';</script>
+  </more>
   <article metal:fill-slot="content" class="yp-pages view"
            ng-app="kotti_yellow_pages"
            ng-controller="PagesCtrl">
@@ -57,5 +60,4 @@ branches: {{branches|json}}
 companies: {{companies|json}}
     </pre>
   </article>
-
 </html>

@@ -56,7 +56,14 @@ class YellowPagesView(BaseView):
 
     @view_config(name='json', renderer='json')
     def json(self):
+
+        companies = self.context.companies_with_permission(self.request)
+
         return {
-            'companies': self.context.companies_with_permission(self.request),
+            'companies': companies,
             'branches': self.context.branches_with_permission(self.request),
+            'min_lat': min([c.latitude for c in companies]),
+            'max_lat': max([c.latitude for c in companies]),
+            'min_lng': min([c.longitude for c in companies]),
+            'max_lng': max([c.longitude for c in companies]),
         }
