@@ -19,11 +19,6 @@ $(function () {
             $("input[name=latitude]").val(e.target._latlng.lat);
             $("input[name=longitude]").val(e.target._latlng.lng);
         });
-        // lg = L.layerGroup().addTo(map);
-        // lc = L.control.layers(
-        //     {"Map Quest": mapquest},
-        //     {"Sprite Markers": lg, "Regular Marker": orig}
-        // ).addTo(map);
     }
 
     function setLatLng(pos) {

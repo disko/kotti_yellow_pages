@@ -43,6 +43,22 @@ class YellowPages(Content):
         addable_to=['Document', ],
     )
 
+    def branches_with_permission(self, request, permission='view'):
+        branches = [
+            c for c in self.children_with_permission(request, permission)
+            if isinstance(c, YPBranch)
+        ]
+        branches.sort(key=lambda c: c.title)
+        return branches
+
+    def companies_with_permission(self, request, permission='view'):
+        companies = [
+            c for c in self.children_with_permission(request, permission)
+            if isinstance(c, YPCompany)
+        ]
+        companies.sort(key=lambda c: c.title)
+        return companies
+
 
 class YPBranch(Content):
     """Yellow Pages Branch content type"""
@@ -65,6 +81,12 @@ class YPBranch(Content):
         add_view=u'add_yp_branch',
         addable_to=['YellowPages', ],
     )
+
+    def __json__(self, request):
+        return {
+            'id': self.id,
+            'title': self.title,
+        }
 
 
 class YPCompany(Content):
@@ -103,7 +125,7 @@ class YPCompany(Content):
         addable_to=['YellowPages', ],
     )
 
-    def __init__(self, street=None, zipcode=None, country=None, state=None,
+    def __init__(self, street=None, zipcode=None, city=None, country=None,
                  telephone=None, facsimile=None, url=None, email=None,
                  latitude=None, longitude=None, **kwargs):
 
@@ -111,14 +133,30 @@ class YPCompany(Content):
 
         self.street = street
         self.zipcode = zipcode
+        self.city = city
         self.country = country
-        self.state = state
         self.telephone = telephone
         self.facsimile = facsimile
         self.url = url
         self.email = email
         self.latitude = latitude
         self.longitude = longitude
+
+    def __json__(self, request):
+        return {
+            'title': self.title,
+            'name': self.title,
+            'street': self.street,
+            'zipcode': self.zipcode,
+            'city': self.city,
+            'country': self.country,
+            'telephone': self.telephone,
+            'facsimile': self.facsimile,
+            'url': self.url,
+            'email': self.email,
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+        }
 
 
 class YPCompanyToBranch(Base):

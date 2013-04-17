@@ -50,4 +50,13 @@ class YellowPagesView(BaseView):
 
         pages.need()
 
-        return {}
+        return {
+            'companies': self.context.companies_with_permission(self.request),
+        }
+
+    @view_config(name='json', renderer='json')
+    def json(self):
+        return {
+            'companies': self.context.companies_with_permission(self.request),
+            'branches': self.context.branches_with_permission(self.request),
+        }

@@ -10,6 +10,7 @@ from __future__ import absolute_import
 from fanstatic import Group
 from fanstatic import Library
 from fanstatic import Resource
+from js.angular import angular
 from js.jquery import jquery
 
 library = Library('kotti_yellow_pages', 'static')
@@ -19,12 +20,25 @@ leaflet = Resource(
     'js/leaflet.css.bundle.js',
     minified='js/leaflet.css.bundle.min.js'
 )
+angular_leaflet = Resource(
+    library,
+    'js/angular-leaflet-directive.js',
+    minified='js/angular-leaflet-directive.min.js',
+    depends=[leaflet, angular, ]
+)
+
+kotti_yellow_pages = Resource(
+    library,
+    'js/kotti_yellow_pages.js',
+    minified='js/kotti_yellow_pages.min.js',
+    depends=[angular_leaflet, ]
+)
 
 pages_js = Resource(
     library,
     'js/pages.js',
     minified='js/pages.min.js',
-    depends=[leaflet, ]
+    depends=[kotti_yellow_pages, ]
 )
 company_js = Resource(
     library,

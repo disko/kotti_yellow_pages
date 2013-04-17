@@ -25,6 +25,7 @@ class Schema(colander.MappingSchema):
     title = colander.SchemaNode(colander.String(), title=_("Company name"))
     street = colander.SchemaNode(colander.String(), title=_("Street"))
     zipcode = colander.SchemaNode(colander.String(), title=_("Zipcode"))
+    city = colander.SchemaNode(colander.String(), title=_("City"))
     country = colander.SchemaNode(colander.String(), title=_("Country"))
     telephone = colander.SchemaNode(colander.String(), title=_("Telephone"))
     facsimile = colander.SchemaNode(colander.String(), title=_("Facsimile"))

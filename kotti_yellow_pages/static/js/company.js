@@ -1,4 +1,3 @@
-
 $(function () {
 
     var map, mapquest, marker, position;

@@ -58,4 +58,4 @@ def on_company_transition(event):
     _to = event.info.transition['to_state']
 
     log.info('Transition of %s from %s to %s' % (event.object, _from, _to))
-    import pdb; pdb.set_trace()
+    #import pdb; pdb.set_trace()

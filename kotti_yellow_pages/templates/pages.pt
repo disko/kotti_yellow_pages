@@ -1,15 +1,61 @@
 <!DOCTYPE html>
 <html xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       metal:use-macro="api.macro('kotti:templates/view/master.pt')"
       i18n:domain="kotti_yellow_pages">
 
-  <article metal:fill-slot="content" class="yellowpages-view content">
+  <article metal:fill-slot="content" class="yp-pages view"
+           ng-app="kotti_yellow_pages"
+           ng-controller="PagesCtrl">
     <h1>${context.title}</h1>
     <p class="description">
       ${context.description}
     </p>
-    <div tal:content="structure context.example_attribute | None"></div>
+    <p>
+      <span i18n:translate="">Show branches</span>:
+      <span ng-repeat="branch in branches">
+        <input type="checkbox" ng-model="branch.visible" /> {{branch.title}}
+      </span>
+    </p>
+    <div class="row">
+      <div class="span6">
+        <div ng-repeat="company in companies">
+          <h3>{{company.title}}</h3>
+          <p>
+            {{company.street}}<br />
+            {{company.zipcode}} {{company.city}}<br />
+            {{company.country}}
+          </p>
+          <p>
+            <span i18n:translate="">Telephone</span>:
+            <a href="tel:{{company.telephone}}">{{company.telephone}}</a><br />
+            <span i18n:translate="">Facsimile</span>: {{company.facsimile}}
+          </p>
+          <p>
+            <span i18n:translate="">Web</span>:
+            <a href="{{company.url}}">{{company.url}}</a><br />
+            <span i18n:translate="">Email</span>:
+            <a href="mailto:{{company.email}}">{{company.email}}</a>
+          </p>
+        </div>
+      </div>
+      <div class="span6">
+        <div id="map">
+          <leaflet marker="marker" center="center" zoom="zoom" draggable="true"></leaflet>
+        </div>
+        <p></p>
+        <p>
+          <a href="${request.resource_url(context, 'add_yp_company')}" class="btn btn-primary">
+            Add your company to this listing
+          </a>
+        </p>
+      </div>
+    </div>
+    <pre>
+branches: {{branches|json}}
+companies: {{companies|json}}
+    </pre>
   </article>
 
 </html>

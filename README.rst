@@ -17,5 +17,7 @@ you setup Fanstatic) section could then look like this::
 
     kotti.configurators = kotti_yellow_pages.kotti_configure
 
+https://github.com/leaflet-extras/leaflet.css
+http://tombatossals.github.io/angular-leaflet-directive/
 
 .. _Find out more about Kotti: http://pypi.python.org/pypi/Kotti
