@@ -9,6 +9,7 @@ import colander
 import deform
 from kotti.views.form import AddFormView
 from kotti.views.form import EditFormView
+from kotti.views.form import ObjectType
 from pyramid.view import view_config
 from pyramid.view import view_defaults
 
@@ -17,6 +18,7 @@ from kotti_yellow_pages.fanstatic import company
 from kotti_yellow_pages.fanstatic import company_edit
 from kotti_yellow_pages.resources import YPCompany
 from kotti_yellow_pages.views import BaseView
+from kotti_yellow_pages.views.branch import deferred_branches_widget
 
 
 class Schema(colander.MappingSchema):
@@ -47,6 +49,10 @@ class Schema(colander.MappingSchema):
     longitude = colander.SchemaNode(colander.Float(),
                                     title=_(u"Longitude"),
                                     widget=deform.widget.HiddenWidget())
+    branches = colander.SchemaNode(ObjectType(),
+                                   title=_('Branches'),
+                                   widget=deferred_branches_widget,
+                                   missing=[])
 
 
 @view_config(name=YPCompany.type_info.add_view,

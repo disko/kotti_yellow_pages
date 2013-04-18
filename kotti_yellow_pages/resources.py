@@ -6,6 +6,7 @@ Created on 2013-04-12
 """
 
 from kotti import Base
+from kotti import DBSession
 from kotti.resources import Content
 from sqlalchemy import Column
 from sqlalchemy import Float
@@ -73,7 +74,15 @@ class YPBranch(Content):
         primary_key=True
     )
 
-    companies = association_proxy('branch_companies', 'company')
+    @property
+    def companies(self):
+        """
+
+        :result: List of companies
+        :rtype: list of :class:`~kotti_yellow_pages.resources.YPCompany`
+        """
+
+        return [rel.company for rel in self.company_branches]
 
     type_info = Content.type_info.copy(
         name=u'YPBranch',
@@ -87,6 +96,39 @@ class YPBranch(Content):
             'id': self.id,
             'title': self.title,
         }
+
+
+class YPCompanyToBranch(Base):
+    """ YPCompany to YPBranch mapping"""
+
+    __tablename__ = 'yp_companies_to_branches'
+
+    company_id = Column(Integer, ForeignKey("yp_companies.id"),
+                        primary_key=True)
+    branch_id = Column(Integer, ForeignKey("yp_branches.id"),
+                       primary_key=True)
+
+    branch = relationship('YPBranch', backref=backref('company_branches'))
+
+    title = association_proxy('branch', 'title')
+
+    @classmethod
+    def _find_by_title(cls, title):
+        """ Find a branch with the given title.
+
+        :param title: Title of the branch to find.
+        :type title: unicode
+
+        :result:
+        :rtype: :class:`~kotti_yellow_pages.resources.YPCompanyToBranch`
+        """
+
+        with DBSession.no_autoflush:
+            branch = DBSession.query(YPBranch).filter_by(title=title).first()
+        if branch is None:
+            branch = YPBranch(title=title)
+
+        return cls(branch=branch)
 
 
 class YPCompany(Content):
@@ -116,7 +158,16 @@ class YPCompany(Content):
     latitude = Column(Float)
     longitude = Column(Float)
 
-    branches = association_proxy('company_branches', 'branch')
+    _branches = relationship(
+        YPCompanyToBranch,
+        backref=backref('company'),
+        cascade='all, delete-orphan',
+    )
+
+    branches = association_proxy(
+        '_branches',
+        'title',
+        creator=YPCompanyToBranch._find_by_title)
 
     type_info = Content.type_info.copy(
         name=u'YPCompany',
@@ -127,7 +178,7 @@ class YPCompany(Content):
 
     def __init__(self, street=None, zipcode=None, city=None, country=None,
                  telephone=None, facsimile=None, url=None, email=None,
-                 latitude=None, longitude=None, **kwargs):
+                 latitude=None, longitude=None, branches=[], **kwargs):
 
         super(YPCompany, self).__init__(**kwargs)
 
@@ -141,6 +192,7 @@ class YPCompany(Content):
         self.email = email
         self.latitude = latitude
         self.longitude = longitude
+        self.branches = branches
 
     def __json__(self, request):
         return {
@@ -156,18 +208,5 @@ class YPCompany(Content):
             'email': self.email,
             'latitude': self.latitude,
             'longitude': self.longitude,
+            'branches': [b for b in self.branches],
         }
-
-
-class YPCompanyToBranch(Base):
-    """ YPCompany to YPBranch mapping"""
-
-    __tablename__ = 'yp_companies_to_branches'
-
-    company_id = Column(Integer, ForeignKey("yp_companies.id"),
-                        primary_key=True)
-    branch_id = Column(Integer, ForeignKey("yp_branches.id"),
-                       primary_key=True)
-
-    company = relationship(YPCompany, backref=backref('company_branches'))
-    branch = relationship(YPBranch, backref=backref('branch_companies'))

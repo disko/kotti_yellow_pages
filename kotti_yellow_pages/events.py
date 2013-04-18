@@ -26,36 +26,36 @@ def on_company_insert(event):
 
     log.info("YPCompany insert")
 
-    context = event.object
-    request = event.request
+    # context = event.object
+    # request = event.request
 
-    wf = get_workflow(context)
-    transitions = wf.get_transitions(context, request)
-    to_states = [t['to_state'] for t in transitions]
+    # wf = get_workflow(context)
+    # transitions = wf.get_transitions(context, request)
+    # to_states = [t['to_state'] for t in transitions]
 
-    if 'private' in to_states:
-        wf.transition_to_state(context, request, 'private')
-    elif 'pending' in to_states:
-        wf.transition_to_state(context, request, 'pending')
+    # if 'private' in to_states:
+    #     wf.transition_to_state(context, request, 'private')
+    # elif 'pending' in to_states:
+    #     wf.transition_to_state(context, request, 'pending')
 
-    #import pdb; pdb.set_trace()
-    if not has_permission('view', context, request):
-        request.session.flash(
-            _(u'You will be notified on approval or rejection of your entry.'),
-            'info')
-        raise HTTPTemporaryRedirect(request.resource_url(context.parent))
-    #import pdb; pdb.set_trace()
+    # #import pdb; pdb.set_trace()
+    # if not has_permission('view', context, request):
+    #     request.session.flash(
+    #         _(u'You will be notified on approval or rejection of your entry.'),
+    #         'info')
+    #     raise HTTPTemporaryRedirect(request.resource_url(context.parent))
+    # #import pdb; pdb.set_trace()
 
 
 @subscribe(WorkflowTransition, YPCompany)
 def on_company_transition(event):
     log.info("YPCompany transition")
-    print event.object
-    print event.request
+    # print event.object
+    # print event.request
 
-    wf = event.info.workflow
-    _from = event.info.transition['from_state']
-    _to = event.info.transition['to_state']
+    # wf = event.info.workflow
+    # _from = event.info.transition['from_state']
+    # _to = event.info.transition['to_state']
 
-    log.info('Transition of %s from %s to %s' % (event.object, _from, _to))
-    #import pdb; pdb.set_trace()
+    # log.info('Transition of %s from %s to %s' % (event.object, _from, _to))
+    # #import pdb; pdb.set_trace()
