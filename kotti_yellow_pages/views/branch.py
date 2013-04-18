@@ -26,7 +26,10 @@ def deferred_branches_widget(node, kw):
     available_branches = [
         (topic.title.encode('utf-8'), topic.title.encode('utf-8'))
         for topic in all_branches]
-    return CheckboxChoiceWidget(values=available_branches)
+    return CheckboxChoiceWidget(
+        values=available_branches,
+        template="kotti_yellow_pages:templates/checkbox_choice"
+    )
 
 
 class YPBranchSchema(ContentSchema):
