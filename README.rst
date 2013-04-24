@@ -2,9 +2,10 @@
 kotti_yellow_pages
 ==================
 
-Yellow Pages content type for Kotti.
+Yellow Pages content type for `Kotti`_.
 
-`Find out more about Kotti`_
+THIS IS VERY MUCH WORK IN PROGRESS.  DO NOT USE IT FOR ANYTHING BUT
+DEVELOPMENT!  THINGS WILL CHANGE RAPIDLY, API IS IN NO WAY STABLE YET!
 
 Setup
 =====
@@ -20,4 +21,4 @@ you setup Fanstatic) section could then look like this::
 https://github.com/leaflet-extras/leaflet.css
 http://tombatossals.github.io/angular-leaflet-directive/
 
-.. _Find out more about Kotti: http://pypi.python.org/pypi/Kotti
+.. _Kotti: http://pypi.python.org/pypi/Kotti

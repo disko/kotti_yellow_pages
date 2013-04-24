@@ -1,0 +1,37 @@
+<configure xmlns="http://namespaces.repoze.org/bfg"
+  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+  i18n:domain="kotti_yellow_pages">
+  <workflow name="yp_pages" type="security" state_attr="state"
+    initial_state="private"
+    content_types="kotti_yellow_pages.interfaces.IYellowPagesWorkflow"
+    permission_checker="pyramid.security.has_permission">
+    <state name="private"
+      callback="kotti.workflow.workflow_callback">
+      <key name="title" value="_(u'Private')" />
+      <key name="order" value="1" />
+      <key name="inherit" value="0" />
+      <key name="system.Everyone" value="" />
+      <key name="role:viewer" value="view" />
+      <key name="role:editor"
+        value="view add_branch add_company edit state_change" />
+      <key name="role:owner"
+        value="view add_branch add_company edit manage state_change" />
+    </state>
+    <state name="public"
+      callback="kotti.workflow.workflow_callback">
+      <key name="title" value="_(u'Public')" />
+      <key name="order" value="2" />
+      <key name="inherit" value="0" />
+      <key name="system.Everyone" value="view add_company" />
+      <key name="role:viewer" value="view" />
+      <key name="role:editor"
+        value="view add_branch add_company edit state_change" />
+      <key name="role:owner"
+        value="view add_branch add_company edit manage state_change" />
+    </state>
+    <transition name="private_to_public" permission="state_change"
+      from_state="private" to_state="public" />
+    <transition name="public_to_private" permission="state_change"
+      from_state="public" to_state="private" />
+  </workflow>
+</configure>

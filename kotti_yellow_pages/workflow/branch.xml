@@ -1,0 +1,4 @@
+<configure xmlns="http://namespaces.repoze.org/bfg"
+  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+  i18n:domain="kotti_yellow_pages">
+</configure>
