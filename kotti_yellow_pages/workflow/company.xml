@@ -49,6 +49,10 @@
       from_state="created" to_state="pending" />
     <transition name="created_to_private" permission="state_change"
       from_state="created" to_state="private" />
+    <transition name="created_to_public" permission="state_change"
+      from_state="created" to_state="public" />
+    <transition name="private_to_public" permission="state_change"
+      from_state="private" to_state="public" />
 
   </workflow>
 </configure>

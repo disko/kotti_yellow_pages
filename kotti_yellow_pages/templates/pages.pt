@@ -55,7 +55,7 @@
         </p>
       </div>
     </div>
-    <pre>
+    <pre tal:condition="False">
 branches: {{branches|json}}
 companies: {{companies|json}}
     </pre>
