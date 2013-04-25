@@ -19,13 +19,13 @@
           ${context.zipcode} ${context.city}
         </p>
         <p>
-          <span>Telephone:</span> ${context.telephone}<br />
-          <span>Facsimile:</span> ${context.facsimile}<br />
+          <span i18n:translate="">Telephone</span>: ${context.telephone}<br />
+          <span i18n:translate="">Facsimile</span>: ${context.facsimile}<br />
         </p>
         <p>
-          <span>Web:</span>
+          <span i18n:translate="">Web</span>:
           <a href="${context.url}" target="_blank">${context.url}</a><br />
-          <span>Email:</span>
+          <span i18n:translate="">Email</span>:
           <a href="mailto:${context.email}">${context.email}</a>
         </p>
       </div>

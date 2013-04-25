@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kotti_yellow_pages 0.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-04-25 11:59+0200\n"
+"POT-Creation-Date: 2013-04-25 12:22+0200\n"
 "PO-Revision-Date: 2013-04-25 12:00+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -30,27 +30,35 @@ msgstr "Branche"
 msgid "Yellow Pages Company"
 msgstr "Firma"
 
-#: kotti_yellow_pages/templates/pages.pt:19
-msgid "Show branches"
-msgstr "Branchen anzeigen"
-
+#: kotti_yellow_pages/templates/company.pt:22
 #: kotti_yellow_pages/templates/pages.pt:34
 #: kotti_yellow_pages/views/company.py:32
 msgid "Telephone"
 msgstr "Telefon"
 
+#: kotti_yellow_pages/templates/company.pt:23
 #: kotti_yellow_pages/templates/pages.pt:36
 #: kotti_yellow_pages/views/company.py:33
 msgid "Facsimile"
 msgstr "Telefax"
 
+#: kotti_yellow_pages/templates/company.pt:26
 #: kotti_yellow_pages/templates/pages.pt:39
 msgid "Web"
 msgstr "Web"
 
+#: kotti_yellow_pages/templates/company.pt:28
 #: kotti_yellow_pages/templates/pages.pt:41
 msgid "Email"
 msgstr "Email"
+
+#: kotti_yellow_pages/templates/pages.pt:19
+msgid "Show branches"
+msgstr "Branchen anzeigen"
+
+#: kotti_yellow_pages/templates/pages.pt:52
+msgid "Add your company to this listing"
+msgstr "Als Kooperationspartner bewerben"
 
 #: kotti_yellow_pages/views/branch.py:46
 msgid "Branch"
