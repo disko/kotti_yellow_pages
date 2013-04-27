@@ -20,18 +20,12 @@ leaflet = Resource(
     'js/leaflet.css.bundle.js',
     minified='js/leaflet.css.bundle.min.js'
 )
-angular_leaflet = Resource(
-    library,
-    'js/angular-leaflet-directive.js',
-    minified='js/angular-leaflet-directive.min.js',
-    depends=[leaflet, angular, ]
-)
 
 kotti_yellow_pages = Resource(
     library,
     'js/kotti_yellow_pages.js',
     minified='js/kotti_yellow_pages.min.js',
-    depends=[angular, leaflet, ]
+    depends=[angular, leaflet, jquery, ]
 )
 
 pages_js = Resource(
@@ -44,13 +38,13 @@ company_js = Resource(
     library,
     'js/company.js',
     minified='js/company.min.js',
-    depends=[leaflet, jquery]
+    depends=[kotti_yellow_pages, ]
 )
 company_edit_js = Resource(
     library,
     'js/company_edit.js',
     minified='js/company_edit.min.js',
-    depends=[leaflet, jquery]
+    depends=[kotti_yellow_pages, ]
 )
 
 css = Resource(

@@ -18,15 +18,39 @@
           ${context.street}<br />
           ${context.zipcode} ${context.city}
         </p>
-        <p>
-          <span i18n:translate="">Telephone</span>: ${context.telephone}<br />
-          <span i18n:translate="">Facsimile</span>: ${context.facsimile}<br />
+        <p tal:condition="context.telephone or context.facsimile">
+          <span tal:condition="context.telephone">
+            <span i18n:translate="">
+              Telephone
+            </span>:
+            <a href="tel:${context.telephone}">${context.telephone}</a><br />
+          </span>
+          <span tal:condition="context.facsimile">
+            <span i18n:translate="">
+              Facsimile
+            </span>:
+            ${context.facsimile}
+          </span>
         </p>
-        <p>
-          <span i18n:translate="">Web</span>:
-          <a href="${context.url}" target="_blank">${context.url}</a><br />
-          <span i18n:translate="">Email</span>:
-          <a href="mailto:${context.email}">${context.email}</a>
+        <p tal:condition="context.contact_person">
+          <span i18n:translate="">
+            Contact person
+          </span>: ${context.contact_person}<br />
+        </p>
+        <p tal:condition="context.url or context.email">
+          <span tal:condition="context.url">
+            <span i18n:translate="">
+              Web
+            </span>:
+            <a href="${context.url}" target="_blank">${context.url}</a>
+            <br />
+          </span>
+          <span tal:condition="context.email">
+            <span i18n:translate="">
+              Email
+            </span>:
+            <a href="mailto:${context.email}">${context.email}</a>
+          </span>
         </p>
       </div>
       <div id="map" class="span6"></div>

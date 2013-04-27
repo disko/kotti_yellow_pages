@@ -18,29 +18,60 @@
     <p>
       <span i18n:translate="">Show branches</span>:
       <span ng-repeat="branch in branches">
-        <input type="checkbox" ng-model="branch.visible" /> {{branch.title}}
+        <input type="checkbox" ng-model="branch.visible"
+               ng-change="updateFilter()" /> {{branch.title}}
       </span>
     </p>
     <div class="row">
       <div class="span6">
         <div ng-repeat="company in companies">
-          <h3>{{company.title}}</h3>
-          <p>
-            {{company.street}}<br />
-            {{company.zipcode}} {{company.city}}<br />
-            {{company.country}}
-          </p>
-          <p>
-            <span i18n:translate="">Telephone</span>:
-            <a href="tel:{{company.telephone}}">{{company.telephone}}</a><br />
-            <span i18n:translate="">Facsimile</span>: {{company.facsimile}}
-          </p>
-          <p>
-            <span i18n:translate="">Web</span>:
-            <a href="{{company.url}}">{{company.url}}</a><br />
-            <span i18n:translate="">Email</span>:
-            <a href="mailto:{{company.email}}">{{company.email}}</a>
-          </p>
+          <div>
+            <a ng-click="company.show_details = true" ng-hide="company.show_details">
+              {{company.zipcode}} {{company.city}} – {{company.title}}
+            </a>
+          </div>
+          <div ng-show="company.show_details">
+            <h3>
+              {{company.title}}
+              <a ng-click="company.show_details = false">
+                (hide details)
+              </a>
+            </h3>
+            <p>
+              {{company.street}}<br />
+              {{company.zipcode}} {{company.city}}
+              <span ng-show="company.country">
+                <br />
+                {{company.country}}
+              </span>
+            </p>
+            <p ng-show="company.telephone || company.facsimile">
+              <span ng-show="company.telephone">
+                <span i18n:translate="">Telephone</span>:
+                <a href="tel:{{company.telephone}}">{{company.telephone}}</a>
+              </span>
+              <br ng-show="company.telephone && company.facsimile" />
+              <span ng-show="company.facsimile">
+                <span i18n:translate="">Facsimile</span>: {{company.facsimile}}
+              </span>
+            </p>
+            <p ng-show="company.contact_person">
+              <span i18n:translate="">Contact person</span>:
+              <a href="tel:{{company.contact_person}}">{{company.contact_person}}</a>
+            </p>
+            <p ng-show="company.url || company.email">
+              <span ng-show="company.url">
+                <span i18n:translate="">Web</span>:
+                <a href="{{company.url}}">{{company.url}}</a>
+              </span>
+              <br ng-show="company.url && company.email" />
+              <span ng-show="company.email">
+                <span i18n:translate="">Email</span>:
+                <a href="mailto:{{company.email}}">{{company.email}}</a>
+              </span>
+            </p>
+            <hr/>
+          </div>
         </div>
       </div>
       <div class="span6">
@@ -56,7 +87,7 @@
         </p>
       </div>
     </div>
-    <pre tal:condition="False">
+    <pre tal:condition="True">
 branches: {{branches|json}}
 companies: {{companies|json}}
     </pre>

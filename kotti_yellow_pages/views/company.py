@@ -24,35 +24,64 @@ from kotti_yellow_pages.views.branch import deferred_branches_widget
 class Schema(colander.MappingSchema):
     """Schema for add / edit forms of Companies"""
 
-    title = colander.SchemaNode(colander.String(), title=_("Company name"))
-    street = colander.SchemaNode(colander.String(), title=_("Street"))
-    zipcode = colander.SchemaNode(colander.String(), title=_("Zipcode"))
-    city = colander.SchemaNode(colander.String(), title=_("City"))
-    country = colander.SchemaNode(colander.String(), title=_("Country"))
-    telephone = colander.SchemaNode(colander.String(), title=_("Telephone"))
-    facsimile = colander.SchemaNode(colander.String(), title=_("Facsimile"))
+    title = colander.SchemaNode(
+        colander.String(),
+        title=_("Company name"),)
+    street = colander.SchemaNode(
+        colander.String(),
+        title=_("Street"),)
+    zipcode = colander.SchemaNode(
+        colander.String(),
+        title=_("Zipcode"),)
+    city = colander.SchemaNode(
+        colander.String(),
+        title=_("City"),)
+    country = colander.SchemaNode(
+        colander.String(),
+        title=_("Country"),
+        default=None,
+        missing=None)
+    telephone = colander.SchemaNode(
+        colander.String(),
+        title=_("Telephone"))
+    facsimile = colander.SchemaNode(
+        colander.String(),
+        title=_("Facsimile"),
+        default=None,
+        missing=None)
 
-    url = colander.SchemaNode(colander.String(),
-                              title=_("Website URL"),
-                              default=None,
-                              missing=None,
-                              validator=colander.url)
-    email = colander.SchemaNode(colander.String(),
-                                title=_("Email address"),
-                                default=None,
-                                missing=None,
-                                validator=colander.Email())
+    url = colander.SchemaNode(
+        colander.String(),
+        title=_("Website URL"),
+        default=None,
+        missing=None,
+        validator=colander.url)
+    email = colander.SchemaNode(
+        colander.String(),
+        title=_("Email address"),
+        default=None,
+        missing=None,
+        validator=colander.Email())
 
-    latitude = colander.SchemaNode(colander.Float(),
-                                   title=_(u"Latitude"),
-                                   widget=deform.widget.HiddenWidget())
-    longitude = colander.SchemaNode(colander.Float(),
-                                    title=_(u"Longitude"),
-                                    widget=deform.widget.HiddenWidget())
-    branches = colander.SchemaNode(ObjectType(),
-                                   title=_('Branches'),
-                                   widget=deferred_branches_widget,
-                                   missing=[])
+    contact_person = colander.SchemaNode(
+        colander.String(),
+        title=_("Contact person"),
+        default=None,
+        missing=None)
+
+    latitude = colander.SchemaNode(
+        colander.Float(),
+        title=_(u"Latitude"),)
+        #widget=deform.widget.HiddenWidget())
+    longitude = colander.SchemaNode(
+        colander.Float(),
+        title=_(u"Longitude"),)
+        #widget=deform.widget.HiddenWidget())
+    branches = colander.SchemaNode(
+        ObjectType(),
+        title=_('Branches'),
+        widget=deferred_branches_widget,
+        missing=[])
 
 
 @view_config(name=YPCompany.type_info.add_view,

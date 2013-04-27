@@ -57,7 +57,7 @@ class YellowPages(Content):
             c for c in self.children_with_permission(request, permission)
             if isinstance(c, YPCompany)
         ]
-        companies.sort(key=lambda c: c.title)
+        companies.sort(key=lambda c: c.zipcode)
         return companies
 
 
@@ -148,12 +148,14 @@ class YPCompany(Content):
     street = Column(Unicode)
     zipcode = Column(Unicode)
     city = Column(Unicode)
-    country = Column(Unicode)
+    country = Column(Unicode, nullable=True)
 
     telephone = Column(Unicode)
-    facsimile = Column(Unicode)
-    url = Column(Unicode)
+    facsimile = Column(Unicode, nullable=True)
+    url = Column(Unicode, nullable=True)
     email = Column(Unicode)
+
+    contact_person = Column(Unicode, nullable=True)
 
     latitude = Column(Float)
     longitude = Column(Float)
@@ -177,8 +179,9 @@ class YPCompany(Content):
     )
 
     def __init__(self, street=None, zipcode=None, city=None, country=None,
-                 telephone=None, facsimile=None, url=None, email=None,
-                 latitude=None, longitude=None, branches=[], **kwargs):
+                 telephone=None, facsimile=None, contact_person=None, url=None,
+                 email=None, latitude=None, longitude=None, branches=[],
+                 **kwargs):
 
         super(YPCompany, self).__init__(**kwargs)
 
@@ -188,6 +191,7 @@ class YPCompany(Content):
         self.country = country
         self.telephone = telephone
         self.facsimile = facsimile
+        self.contact_person = contact_person
         self.url = url
         self.email = email
         self.latitude = latitude
@@ -204,6 +208,7 @@ class YPCompany(Content):
             'country': self.country,
             'telephone': self.telephone,
             'facsimile': self.facsimile,
+            'contact_person': self.contact_person,
             'url': self.url,
             'email': self.email,
             'latitude': self.latitude,

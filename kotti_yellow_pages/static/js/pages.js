@@ -13,16 +13,39 @@ PagesCtrl = function($scope, $http) {
   bounds = void 0;
   southWest = void 0;
   northEast = void 0;
+  $scope.updateFilter = function() {
+    debugger;
+  };
   $http.get(window.context_url + "json").success(function(data) {
-    var c, center, i, _results;
-    $scope.companies = data.companies;
-    $scope.branches = data.branches;
+    var b, c, center, i, l, m, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _results;
     center = new L.LatLng((data.min_lat + data.max_lat) / 2.0, (data.min_lng + data.max_lng) / 2.0);
     bounds = new L.LatLngBounds(new L.LatLng(data.min_lat, data.min_lng), new L.LatLng(data.max_lat, data.max_lng));
     map = L.map("map", {
       zoomControl: true
     }).setView(center).fitBounds(bounds);
     mapquest = tiles.addTo(map);
+    $scope.branches = {};
+    _ref = data.branches;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      b = _ref[_i];
+      l = new L.LayerGroup();
+      l.visible = true;
+      $scope.branches[b.title] = l;
+      l.addTo(map);
+    }
+    $scope.companies = [];
+    _ref1 = data.companies;
+    for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+      c = _ref1[_j];
+      c.visible = true;
+      m = new L.Marker(new L.LatLng(c.latitude, c.longitude));
+      _ref2 = c.branches;
+      for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+        b = _ref2[_k];
+        m.addTo($scope.branches[b]);
+      }
+      $scope.companies.push(m);
+    }
     i = $scope.companies.length - 1;
     _results = [];
     while (i >= 0) {
