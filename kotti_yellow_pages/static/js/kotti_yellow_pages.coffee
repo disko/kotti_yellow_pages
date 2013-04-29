@@ -122,7 +122,9 @@ app.directive 'controlGroup', () ->
         <span>{{title}}</span>
         <span class="req" ng-show="required">*</span>
       </label>
-      <div class="controls" ng-transclude>
+      <div class="controls">
+        <span ng-transclude></span>
+        <span class="help-inline">{{$parent.errors[controlGroup]}}</span>
       </div>
     """
     replace: false
@@ -130,5 +132,8 @@ app.directive 'controlGroup', () ->
     #called IFF compile not defined
     link: (scope, elem, attrs) ->
       elem.addClass('control-group')
+      if scope.$parent.errors
+        if scope.$parent.errors[attrs.controlGroup]
+          elem.addClass('error')
 
   return controlGroup

@@ -145,20 +145,20 @@ class YPCompany(Content):
     )
 
     # Add additional columns here
-    street = Column(Unicode)
-    zipcode = Column(Unicode)
-    city = Column(Unicode)
-    country = Column(Unicode, nullable=True)
+    street = Column(Unicode, nullable=False)
+    zipcode = Column(Unicode, nullable=False)
+    city = Column(Unicode, nullable=False)
+    country = Column(Unicode, nullable=False)
 
-    telephone = Column(Unicode)
+    telephone = Column(Unicode, nullable=False)
     facsimile = Column(Unicode, nullable=True)
     url = Column(Unicode, nullable=True)
-    email = Column(Unicode)
+    email = Column(Unicode, nullable=True)
 
     contact_person = Column(Unicode, nullable=True)
 
-    latitude = Column(Float)
-    longitude = Column(Float)
+    lat = Column(Float, nullable=True)
+    lng = Column(Float, nullable=True)
 
     _branches = relationship(
         YPCompanyToBranch,
@@ -180,7 +180,7 @@ class YPCompany(Content):
 
     def __init__(self, street=None, zipcode=None, city=None, country=None,
                  telephone=None, facsimile=None, contact_person=None, url=None,
-                 email=None, latitude=None, longitude=None, branches=[],
+                 email=None, lat=None, lng=None, branches=[],
                  **kwargs):
 
         super(YPCompany, self).__init__(**kwargs)
@@ -194,24 +194,80 @@ class YPCompany(Content):
         self.contact_person = contact_person
         self.url = url
         self.email = email
-        self.latitude = latitude
-        self.longitude = longitude
+        self.lat = lat
+        self.lng = lng
         self.branches = branches
 
+    # def __json__(self, request):
+    #     return {
+    #         'title': self.title,
+    #         'name': self.title,
+    #         'street': self.street,
+    #         'zipcode': self.zipcode,
+    #         'city': self.city,
+    #         'country': self.country,
+    #         'telephone': self.telephone,
+    #         'facsimile': self.facsimile,
+    #         'contact_person': self.contact_person,
+    #         'url': self.url,
+    #         'email': self.email,
+    #         'latitude': self.latitude,
+    #         'longitude': self.longitude,
+    #         'branches': [b for b in self.branches],
+    #     }
+
+    def selectable_branches(self, request):
+
+        if request.context == self:
+            pages = self.parent
+        elif isinstance(request.context, YellowPages):
+            pages = request.context
+        else:
+            raise ValueError('Invalid context.  request.context must be an '
+                             'instance of either YellowPages or YPCompany')
+        branches = pages.branches_with_permission(request)
+
+        return branches
+
     def __json__(self, request):
-        return {
-            'title': self.title,
-            'name': self.title,
-            'street': self.street,
-            'zipcode': self.zipcode,
-            'city': self.city,
-            'country': self.country,
-            'telephone': self.telephone,
-            'facsimile': self.facsimile,
-            'contact_person': self.contact_person,
-            'url': self.url,
-            'email': self.email,
-            'latitude': self.latitude,
-            'longitude': self.longitude,
-            'branches': [b for b in self.branches],
+
+        post = request.POST
+
+        if 'branches' in post:
+            branches = [
+                {
+                    "title": b.title,
+                    "selected": b.title in post.getall('branches')
+                }
+                for b in self.selectable_branches(request)]
+        else:
+            branches = [
+                {"title": b.title, "selected": b.title in self.branches}
+                for b in self.selectable_branches(request)]
+
+        def get(key):
+            if key in post:
+                return post.get(key)
+            else:
+                return getattr(self, key)
+
+        result = {
+            'title': get('title'),
+            'branches': branches,
+            'telephone': get('telephone'),
+            'facsimile': get('facsimile'),
+            'url': get('url'),
+            'email': get('email'),
+            'address': {
+                'street': get('street'),
+                'city': get('city'),
+                'zipcode': get('zipcode'),
+                'country': get('country'),
+            },
+            'location': {
+                'lat': get('lat'),
+                'lng': get('lng'),
+            }
         }
+
+        return result

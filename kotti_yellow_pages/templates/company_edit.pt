@@ -13,32 +13,31 @@
         <form class="form-horizontal" name="form" method="POST"
               enctype="multipart/form-data" accept-charset="utf-8"
               action="${request.resource_url(context, request.view_name)}"
-              ng-init="company = {
-                title: '${context.title}',
-                telephone: '${context.telephone}',
-                facsimile: '${context.facsimile}',
-                url: '${context.url}',
-                email: '${context.email}',
-                address: {
-                  street: '${context.street}',
-                  city: '${context.city}',
-                  zipcode: '${context.zipcode}',
-                  country: '${context.country}'
-                },
-                location: {
-                  lat: ${context.latitude or 0},
-                  lng: ${context.longitude or 0}
-                }
-              };
-              context_url = '${request.resource_url(context, '@@edit')}';">
+              ng-init="company = ${request.company_json}; errors = ${request.company_errors|'{}'};">
 
           <input type="hidden" name="csrf_token" value="${request.session._csrft_}" />
 
-          <div control-group="title" name="title" title="Company name"
+          <div control-group="title" title="Company name"
                required="true"
                i18n:attributes="title">
             <input type="text" name="title" required="required"
                    ng-model="company.title" />
+          </div>
+
+          <div class="control-group">
+            <label class="control-label">
+              <span i18n:translate="">Branches</span>
+              <span class="req">*</span>
+            </label>
+            <div class="controls">
+              <input type="hidden" name="__start__" value="branches:sequence"/>
+              <label class="checkbox" ng-repeat="branch in company.branches">
+                <input type="checkbox" name="branches" value="{{branch.title}}"
+                       ng-model="company.branches[$index].selected" />
+                {{branch.title}}
+              </label>
+              <input type="hidden" name="__end__" value="branches:sequence"/>
+            </div>
           </div>
 
           <fieldset ng-form="addressSubform">
@@ -49,25 +48,25 @@
             <p>
               Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit, deleniti aliquam eum maxime nihil dolorum.
             </p>
-            <div control-group="street" name="street" title="Street"
+            <div control-group="street" title="Street"
                  required="true" i18n:attributes="title">
-              <input type="text" name="street" required="required"
+              <input type="text" name="street"
                      ng-model="company.address.street" />
             </div>
 
-            <div control-group="zipcode" name="zipcode" title="Zipcode"
+            <div control-group="zipcode" title="Zipcode"
                  required="true" i18n:attributes="title">
-              <input type="text" name="zipcode" required="required"
+              <input type="text" name="zipcode"
                      ng-model="company.address.zipcode" />
             </div>
 
-            <div control-group="city" name="city" title="City"
+            <div control-group="city" title="City"
                  required="true" i18n:attributes="title">
-              <input type="text" name="city" required="required"
+              <input type="text" name="city"
                      ng-model="company.address.city" />
             </div>
 
-            <div control-group="country" name="country" title="Country"
+            <div control-group="country" title="Country"
                  required="true" i18n:attributes="title">
               <!-- TODO: make list of countries available.
                          -  pycountry api on the backend
@@ -97,43 +96,44 @@
               <i class="icon-ok" ng-show="communicationSubform.$valid"></i>
             </legend>
 
-            <div control-group="telephone" name="telephone" title="Telephone"
+            <div control-group="telephone" title="Telephone"
                  required="true" i18n:attributes="title">
               <input type="text" name="telephone" required="required"
                      ng-model="company.telephone" />
             </div>
-            <div control-group="facsimile" name="facsimile" title="Facsimile"
+            <div control-group="facsimile" title="Facsimile"
                  required="false" i18n:attributes="title">
               <input type="text" name="facsimile"
                      ng-model="company.facsimile" />
             </div>
-            <div control-group="url" name="url" title="Website URL"
-                 required="true" i18n:attributes="title">
-              <input type="url" name="url"
-                     placeholder="http://www.company.com/"
+            <div control-group="url" title="Website URL"
+                 i18n:attributes="title">
+              <input type="url" name="url" placeholder="http://www.company.com/"
+                     i18n:attributes="placeholder"
                      ng-model="company.url" />
             </div>
-            <div control-group="email" name="email" title="Email address"
-                 required="true" i18n:attributes="title">
+            <div control-group="email" title="Email address"
+                 i18n:attributes="title">
               <input type="email" name="email" placeholder="info@company.com"
+                     i18n:attributes="placeholder"
                      ng-model="company.email" />
             </div>
           </fieldset>
 
-          <fieldset ng-form="geolocationSubform">
+          <fieldset ng-form="geolocationSubform" ng-show="false">
             <legend i18n:translate="">
               Geolocation
             </legend>
 
-            <div control-group="latitude" name="latitude" title="Latitude"
+            <div control-group="lat" title="Latitude"
                  required="true" i18n:attributes="title">
-              <input type="text" name="latitude"
+              <input type="text" name="lat"
                      required="required"
                      ng-model="company.location.lat" />
             </div>
-            <div control-group="longitude" name="longitude" title="Longitude"
+            <div control-group="lng" title="Longitude"
                  required="true" i18n:attributes="title">
-              <input type="text" name="longitude"
+              <input type="text" name="lng"
                      required="required"
                      ng-model="company.location.lng" />
             </div>

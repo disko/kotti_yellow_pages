@@ -62,8 +62,8 @@ class YellowPagesView(BaseView):
         return {
             'companies': companies,
             'branches': self.context.branches_with_permission(self.request),
-            'min_lat': min([c.latitude for c in companies]),
-            'max_lat': max([c.latitude for c in companies]),
-            'min_lng': min([c.longitude for c in companies]),
-            'max_lng': max([c.longitude for c in companies]),
+            'min_lat': min([c.lat for c in companies]),
+            'max_lat': max([c.lat for c in companies]),
+            'min_lng': min([c.lng for c in companies]),
+            'max_lng': max([c.lng for c in companies]),
         }

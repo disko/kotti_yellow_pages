@@ -125,11 +125,16 @@ app.directive('controlGroup', function() {
       required: "@",
       ngModel: "="
     },
-    template: "<label class=\"control-label\" for=\"{{controlGroup}}\">\n  <span>{{title}}</span>\n  <span class=\"req\" ng-show=\"required\">*</span>\n</label>\n<div class=\"controls\" ng-transclude>\n</div>",
+    template: "<label class=\"control-label\" for=\"{{controlGroup}}\">\n  <span>{{title}}</span>\n  <span class=\"req\" ng-show=\"required\">*</span>\n</label>\n<div class=\"controls\">\n  <span ng-transclude></span>\n  <span class=\"help-inline\">{{$parent.errors[controlGroup]}}</span>\n</div>",
     replace: false,
     transclude: true,
     link: function(scope, elem, attrs) {
-      return elem.addClass('control-group');
+      elem.addClass('control-group');
+      if (scope.$parent.errors) {
+        if (scope.$parent.errors[attrs.controlGroup]) {
+          return elem.addClass('error');
+        }
+      }
     }
   };
   return controlGroup;
