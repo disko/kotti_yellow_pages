@@ -50,19 +50,19 @@
             </p>
             <div control-group="street" title="Street"
                  required="true" i18n:attributes="title">
-              <input type="text" name="street"
+              <input type="text" name="street" required="required"
                      ng-model="company.address.street" />
             </div>
 
             <div control-group="zipcode" title="Zipcode"
                  required="true" i18n:attributes="title">
-              <input type="text" name="zipcode"
+              <input type="text" name="zipcode" required="required"
                      ng-model="company.address.zipcode" />
             </div>
 
             <div control-group="city" title="City"
                  required="true" i18n:attributes="title">
-              <input type="text" name="city"
+              <input type="text" name="city" required="required"
                      ng-model="company.address.city" />
             </div>
 
@@ -120,7 +120,7 @@
             </div>
           </fieldset>
 
-          <fieldset ng-form="geolocationSubform" ng-show="false">
+          <fieldset ng-form="geolocationSubform" ng-show="true">
             <legend i18n:translate="">
               Geolocation
             </legend>
@@ -152,13 +152,6 @@
         <div id="map"><!-- the map widget --></div>
       </div>
     </div>
-    <div tal:content="structure form"></div>
-    <pre>form={{form || json}}</pre>
-    <pre>addressSubform={{addressSubform || json}}</pre>
-    <pre>communicationSubform={{communicationSubform || json}}</pre>
-    <pre>geolocationSubform={{geolocationSubform || json}}</pre>
-    <pre>company={{company || json}}</pre>
-    <pre>${request.view_name}</pre>
   </div>
 
 </html>

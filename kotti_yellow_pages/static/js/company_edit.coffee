@@ -91,11 +91,13 @@ CompanyEditCtrl = ($scope, $http, $log, map) ->
     # debugger
 
   handleLocationChange = ->
+    $log.info("handleLocationChange")
     l = $scope.company.location
     if not (l and l.lat and l. lng)
       return false
     if not L.LatLng.isPrototypeOf($scope.company.location)
       $scope.company.location = new L.LatLng(l.lat, l.lng)
+    $scope.setMarkerFromLocation()
 
   $scope.$watch 'company.location.lat', handleLocationChange, false
   $scope.$watch 'company.location.lng', handleLocationChange, false

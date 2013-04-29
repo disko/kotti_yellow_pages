@@ -124,13 +124,15 @@ CompanyEditCtrl = function($scope, $http, $log, map) {
   $scope.$watch('addressSubform.$valid', function() {});
   handleLocationChange = function() {
     var l;
+    $log.info("handleLocationChange");
     l = $scope.company.location;
     if (!(l && l.lat && l.lng)) {
       return false;
     }
     if (!L.LatLng.isPrototypeOf($scope.company.location)) {
-      return $scope.company.location = new L.LatLng(l.lat, l.lng);
+      $scope.company.location = new L.LatLng(l.lat, l.lng);
     }
+    return $scope.setMarkerFromLocation();
   };
   $scope.$watch('company.location.lat', handleLocationChange, false);
   return $scope.$watch('company.location.lng', handleLocationChange, false);
