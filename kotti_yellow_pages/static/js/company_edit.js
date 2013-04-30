@@ -28,12 +28,23 @@ CompanyEditCtrl = function($scope, $http, $log, map) {
     if (!$scope.addressSubform.$valid) {
       return false;
     }
-    map.latLngForAddress($scope.company.address).then(function(latLng) {
-      if (latLng) {
-        $scope.company.location.lat = latLng.lat;
-        $scope.company.location.lng = latLng.lng;
-        return $scope.setMarkerFromLocation();
+    map.latLngForAddress($scope.company.address).then(function(results) {
+      var latlng, locations;
+
+      if (results.length !== 1) {
+        $log.warn("response.data contains " + results.length + " results.");
+        return false;
       }
+      locations = results[0].locations;
+      if (locations.length < 1) {
+        $log.warn("results[0] contains " + locations.length + " locations.");
+        return false;
+      }
+      latlng = locations[0].latLng;
+      latlng = new L.LatLng(latlng.lat, latlng.lng);
+      $scope.company.location.lat = latLng.lat;
+      $scope.company.location.lng = latLng.lng;
+      return $scope.setMarkerFromLocation();
     });
     return false;
   };

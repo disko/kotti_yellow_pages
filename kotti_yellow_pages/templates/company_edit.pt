@@ -147,9 +147,10 @@
       </div>
 
       <!-- TODO: add scrollfix
-                 (e.g. http://angular-ui.github.io/#directives-scrollfix) -->
+                 (e.g. http://angular-ui.github.io/#directives-scrollfix
+                 or Twitter Bootstrap's affix JS) -->
       <div class="span6">
-        <div id="map" ui-scrollfix="50"><!-- the map widget --></div>
+        <div id="map"><!-- the map widget --></div>
       </div>
     </div>
   </div>

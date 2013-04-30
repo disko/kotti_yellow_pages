@@ -10,11 +10,38 @@ from __future__ import absolute_import
 from fanstatic import Group
 from fanstatic import Library
 from fanstatic import Resource
-from js.angular import angular
-from js.angular_ui import angular_ui
 from js.jquery import jquery
 
 library = Library('kotti_yellow_pages', 'static')
+
+# For now we have to bundle our own angular.js because the version provided by
+# js.angular does not depend on jquery.  This is correct but shows up a current
+# limitation of fanstatic, which cannot declare "optional dependencies".
+# See: https://groups.google.com/forum/#!msg/fanstatic/CGAtvaLBu7g/elwINFULqEUJ
+
+angular = Resource(
+    library,
+    'js/angular.js',
+    minified='js/angular.min.js',
+    depends=[jquery, ])
+
+angular_ui_css = Resource(
+    library,
+    'css/angular-ui.css',
+    minified='css/angular-ui.min.css',
+    depends=[angular, ])
+angular_ui_js = Resource(
+    library,
+    'js/angular-ui.js',
+    minified='js/angular-ui.min.js',
+    depends=[angular, ])
+angular_ui = Group([angular_ui_js, angular_ui_css])
+
+angular_bootstrap = Resource(
+    library,
+    'js/angular-bootstrap.js',
+    minified='js/angular-bootstrap.min.js',
+    depends=[angular, ])
 
 leaflet = Resource(
     library,

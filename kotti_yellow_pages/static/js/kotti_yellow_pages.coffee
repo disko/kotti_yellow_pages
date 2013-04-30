@@ -65,22 +65,7 @@ app.factory "mapquest", ($log, $http) ->
           if response.status != 200
             $log.error("ERROR (status=#{response.status})")
 
-          results = response.data.results
-
-          if results.length != 1
-            $log.warn("response.data contains #{results.length} results.")
-            return false
-
-          locations = results[0].locations
-
-          if locations.length != 1
-            $log.warn("results[0] contains #{locations.length} locations.")
-            return false
-
-          latlng = locations[0].latLng
-          latlng = new L.LatLng(latlng.lat, latlng.lng)
-
-          return latlng
+          return response.data.results
 
       return promise
 

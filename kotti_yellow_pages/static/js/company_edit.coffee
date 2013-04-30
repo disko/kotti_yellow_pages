@@ -30,11 +30,31 @@ CompanyEditCtrl = ($scope, $http, $log, map) ->
       return false
 
     # call the addressService
-    map.latLngForAddress($scope.company.address).then (latLng) ->
-      if latLng
-        $scope.company.location.lat = latLng.lat
-        $scope.company.location.lng = latLng.lng
-        $scope.setMarkerFromLocation()
+    map.latLngForAddress($scope.company.address).then (results) ->
+
+      if results.length != 1
+        $log.warn("response.data contains #{results.length} results.")
+        return false
+
+      locations = results[0].locations
+
+      if locations.length < 1
+        # TODO:   Display a meaninful status message to the user and let them
+        #         chose wether to alter the address and start searching again
+        #         or issue the search without street and thus obtain a rather
+        #         inaccurate result (probably multiple results, see below)
+        $log.warn("results[0] contains #{locations.length} locations.")
+        return false
+
+      # TODO: Some queries have multiple locations in their result.
+      #       The user should be able to chose among them instead of us blindly
+      #       chosing the first.
+      latlng = locations[0].latLng
+      latlng = new L.LatLng(latlng.lat, latlng.lng)
+
+      $scope.company.location.lat = latLng.lat
+      $scope.company.location.lng = latLng.lng
+      $scope.setMarkerFromLocation()
 
     return false
 
