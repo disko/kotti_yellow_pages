@@ -4,13 +4,9 @@
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       metal:use-macro="api.macro('kotti:templates/view/master.pt')"
       i18n:domain="kotti_yellow_pages">
-  <head metal:fill-slot="head-more">
-    <script>
-      var latitude = ${context.lat};
-      var longitude = ${context.lng};
-    </script>
-  </head>
-  <article metal:fill-slot="content" class="yp-company view">
+  <article metal:fill-slot="content" class="yp-company view"
+           ng-app="kotti_yellow_pages" ng-controller="CompanyCtrl"
+           ng-init="lat = ${context.lat}; lng = ${context.lng};">
     <div class="row">
       <div class="span6">
         <h1>${context.title}</h1>
