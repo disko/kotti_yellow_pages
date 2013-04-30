@@ -4,7 +4,7 @@
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       metal:use-macro="api.macro('kotti:templates/view/master.pt')"
       i18n:domain="kotti_yellow_pages">
-  <article metal:fill-slot="content" class="yp-company view"
+  <article metal:fill-slot="content" class="yp-company view ng-cloak"
            ng-app="kotti_yellow_pages" ng-controller="CompanyCtrl"
            ng-init="lat = ${context.lat}; lng = ${context.lng};">
     <div class="row">

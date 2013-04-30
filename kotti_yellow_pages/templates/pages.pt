@@ -8,9 +8,9 @@
   <more metal:fill-slot="head-more">
     <script>window.context_url = '${request.resource_url(context)}';</script>
   </more>
-  <article metal:fill-slot="content" class="yp-pages view"
-           ng-app="kotti_yellow_pages"
-           ng-controller="PagesCtrl">
+  <article metal:fill-slot="content" class="yp-pages view ng-cloak"
+           ng-app="kotti_yellow_pages" ng-controller="PagesCtrl"
+           ng-init="branches = ${branches_json};">
     <h1>${context.title}</h1>
     <p class="description">
       ${context.description}
@@ -24,7 +24,7 @@
     </p>
     <div class="row">
       <div class="span6">
-        <div ng-repeat="company in companies">
+        <div ng-repeat="company in companies" tal:condition="False">
           <div>
             <a ng-click="company.show_details = true" ng-hide="company.show_details">
               {{company.zipcode}} {{company.city}} – {{company.title}}
@@ -88,8 +88,6 @@
       </div>
     </div>
     <pre tal:condition="True">
-branches: {{branches|json}}
-companies: {{companies|json}}
     </pre>
   </article>
 </html>

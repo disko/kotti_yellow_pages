@@ -53,7 +53,7 @@ kotti_yellow_pages = Resource(
     library,
     'js/kotti_yellow_pages.js',
     minified='js/kotti_yellow_pages.min.js',
-    depends=[jquery, angular, angular_ui, leaflet, ]
+    depends=[jquery, angular, leaflet, ]
 )
 
 pages_js = Resource(
@@ -72,7 +72,7 @@ company_edit_js = Resource(
     library,
     'js/company_edit.js',
     minified='js/company_edit.min.js',
-    depends=[kotti_yellow_pages, ]
+    depends=[kotti_yellow_pages, angular_bootstrap, ]
 )
 
 css = Resource(

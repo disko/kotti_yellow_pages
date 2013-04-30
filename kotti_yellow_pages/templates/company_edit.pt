@@ -5,7 +5,7 @@
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
       metal:use-macro="api.macro('kotti:templates/edit/master.pt')">
 
-  <div metal:fill-slot="content" class="yp-company edit"
+  <div metal:fill-slot="content" class="yp-company edit ng-cloak"
        ng-app="kotti_yellow_pages" ng-controller="CompanyEditCtrl">
     <h1 tal:content="structure first_heading | default">${api.page_title}</h1>
     <div class="row">
@@ -81,7 +81,7 @@
 
             <!-- TODO: make the toggle animated.
                        https://github.com/angular-ui/bootstrap/tree/master/src/collapse -->
-            <div class="form-actions" ng-show="addressSubform.$valid">
+            <div class="form-actions" ng-show="addressSubform.$valid" collapse="isCollapsed">
               <a class="btn" i18n:translate=""
                       ng-click="locateAddress()">
                 Update marker position from address

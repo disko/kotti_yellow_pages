@@ -5,6 +5,8 @@ Created on 2013-04-13
 :author: Andreas Kaiser (disko)
 """
 
+import json
+
 from kotti.views.edit.content import ContentSchema
 from kotti.views.form import AddFormView
 from kotti.views.form import EditFormView
@@ -50,20 +52,19 @@ class YellowPagesView(BaseView):
 
         pages.need()
 
+        branches = [
+            {
+                "title": b.title,
+                "visible": True,
+                "companies": [
+                    c.__json__(self.request) for c in
+                    self.context.companies_with_permission(self.request)
+                    if b.title in c.branches
+                ]
+            }
+            for b in self.context.branches_with_permission(self.request)
+        ]
+
         return {
-            'companies': self.context.companies_with_permission(self.request),
-        }
-
-    @view_config(name='json', renderer='json')
-    def json(self):
-
-        companies = self.context.companies_with_permission(self.request)
-
-        return {
-            'companies': companies,
-            'branches': self.context.branches_with_permission(self.request),
-            'min_lat': min([c.lat for c in companies]),
-            'max_lat': max([c.lat for c in companies]),
-            'min_lng': min([c.lng for c in companies]),
-            'max_lng': max([c.lng for c in companies]),
+            'branches_json': json.dumps(branches)
         }

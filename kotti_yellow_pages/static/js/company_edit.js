@@ -42,8 +42,8 @@ CompanyEditCtrl = function($scope, $http, $log, map) {
       }
       latlng = locations[0].latLng;
       latlng = new L.LatLng(latlng.lat, latlng.lng);
-      $scope.company.location.lat = latLng.lat;
-      $scope.company.location.lng = latLng.lng;
+      $scope.company.location.lat = latlng.lat;
+      $scope.company.location.lng = latlng.lng;
       return $scope.setMarkerFromLocation();
     });
     return false;

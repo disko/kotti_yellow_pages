@@ -6,7 +6,7 @@
 
 var app;
 
-app = angular.module("kotti_yellow_pages", ["ui"]);
+app = angular.module("kotti_yellow_pages", []);
 
 /**
  * mapquest service
