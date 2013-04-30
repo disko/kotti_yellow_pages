@@ -6,8 +6,8 @@
       i18n:domain="kotti_yellow_pages">
   <head metal:fill-slot="head-more">
     <script>
-      var latitude = ${context.latitude};
-      var longitude = ${context.longitude};
+      var latitude = ${context.lat};
+      var longitude = ${context.lng};
     </script>
   </head>
   <article metal:fill-slot="content" class="yp-company view">

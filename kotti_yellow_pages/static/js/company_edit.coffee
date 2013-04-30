@@ -6,35 +6,6 @@
  *                          latLngForAddress method.
 ###
 
-Function::property = (prop, desc) ->
-  Object.defineProperty @prototype, prop, desc
-
-class Address
-  complete: false
-  constructor: (@_street='', @_zipcode='', @_city='', @_country='') ->
-  @property 'street',
-    get: -> @_street
-    set: (@_street) ->
-      @updateComplete()
-  @property 'zipcode',
-    get: -> @_zipcode
-    set: (@_zipcode) ->
-      @updateComplete()
-  @property 'city',
-    get: -> @_city
-    set: (@_city) ->
-      @updateComplete()
-  @property 'country',
-    get: -> @_country
-    set: (@_country) ->
-      @updateComplete()
-
-  updateComplete: ->
-    if @_street and @_zipcode and @_city and @_country
-      @complete = true
-    else
-      @complete = false
-
 CompanyEditCtrl = ($scope, $http, $log, map) ->
 
   # default location
@@ -86,9 +57,6 @@ CompanyEditCtrl = ($scope, $http, $log, map) ->
     $scope.$apply ->
       $scope.company.location.lat = e.target._latlng.lat
       $scope.company.location.lng = e.target._latlng.lng
-
-  $scope.$watch 'addressSubform.$valid', ->
-    # debugger
 
   handleLocationChange = ->
     $log.info("handleLocationChange")

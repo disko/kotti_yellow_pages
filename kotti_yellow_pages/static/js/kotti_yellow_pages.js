@@ -6,7 +6,7 @@
 
 var app;
 
-app = angular.module("kotti_yellow_pages", []);
+app = angular.module("kotti_yellow_pages", ["ui"]);
 
 /**
  * mapquest service
@@ -100,6 +100,7 @@ app.factory("mapquest", function($log, $http) {
 app.factory("map", function($log, mapquest) {
   var map;
   $log.info("Initializing map... ");
+  $('#map').height($(window).height() - 40);
   map = L.map("map", {
     zoomControl: true
   });

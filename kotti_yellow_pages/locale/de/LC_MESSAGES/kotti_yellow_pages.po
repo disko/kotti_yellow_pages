@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kotti_yellow_pages 0.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-04-26 15:43+0200\n"
+"POT-Creation-Date: 2013-04-29 15:01+0200\n"
 "PO-Revision-Date: 2013-04-25 12:00+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -30,87 +30,101 @@ msgstr "Branche"
 msgid "Yellow Pages Company"
 msgstr "Firma"
 
-#: kotti_yellow_pages/templates/company.pt:22
-#: kotti_yellow_pages/templates/pages.pt:38
-#: kotti_yellow_pages/views/company.py:46
+#: kotti_yellow_pages/templates/company.pt:23
+#: kotti_yellow_pages/templates/pages.pt:50
+#: kotti_yellow_pages/views/company.py:48
 msgid "Telephone"
 msgstr "Telefon"
 
-#: kotti_yellow_pages/templates/company.pt:26
-#: kotti_yellow_pages/templates/pages.pt:43
-#: kotti_yellow_pages/views/company.py:49
+#: kotti_yellow_pages/templates/company.pt:29
+#: kotti_yellow_pages/views/company.py:51
 msgid "Facsimile"
 msgstr "Telefax"
 
-#: kotti_yellow_pages/templates/company.pt:32
-#: kotti_yellow_pages/templates/pages.pt:47
-#: kotti_yellow_pages/views/company.py:68
+#: kotti_yellow_pages/templates/company.pt:36
+#: kotti_yellow_pages/views/company.py:70
 msgid "Contact person"
 msgstr "Ansprechpartner"
 
-#: kotti_yellow_pages/templates/company.pt:37
-#: kotti_yellow_pages/templates/pages.pt:52
+#: kotti_yellow_pages/templates/company.pt:42
 msgid "Web"
 msgstr "Web"
 
-#: kotti_yellow_pages/templates/company.pt:41
-#: kotti_yellow_pages/templates/pages.pt:57
+#: kotti_yellow_pages/templates/company.pt:49
 msgid "Email"
 msgstr "Email"
+
+#: kotti_yellow_pages/templates/company_edit.pt:29
+#: kotti_yellow_pages/views/company.py:84
+msgid "Branches"
+msgstr "Branchen"
+
+#: kotti_yellow_pages/templates/company_edit.pt:45
+#, fuzzy
+#| msgid "Email address"
+msgid "Address"
+msgstr "Email Adresse"
+
+#: kotti_yellow_pages/templates/company_edit.pt:85
+msgid "Update marker position from address"
+msgstr "Kartenposition aktualisieren"
+
+#: kotti_yellow_pages/templates/company_edit.pt:95
+msgid "Communication"
+msgstr "Kommunikation"
+
+#: kotti_yellow_pages/templates/company_edit.pt:124
+msgid "Geolocation"
+msgstr "Geokoordinaten"
 
 #: kotti_yellow_pages/templates/pages.pt:19
 msgid "Show branches"
 msgstr "Branchen anzeigen"
 
-#: kotti_yellow_pages/templates/pages.pt:69
-msgid "Add your company to this listing"
-msgstr "Als Kooperationspartner bewerben"
-
 #: kotti_yellow_pages/views/branch.py:46
 msgid "Branch"
 msgstr "Branche"
 
-#: kotti_yellow_pages/views/company.py:29
+#: kotti_yellow_pages/views/company.py:31
 msgid "Company name"
 msgstr "Firmenname"
 
-#: kotti_yellow_pages/views/company.py:32
+#: kotti_yellow_pages/views/company.py:34
 msgid "Street"
 msgstr "Straße"
 
-#: kotti_yellow_pages/views/company.py:35
+#: kotti_yellow_pages/views/company.py:37
 msgid "Zipcode"
 msgstr "PLZ"
 
-#: kotti_yellow_pages/views/company.py:38
+#: kotti_yellow_pages/views/company.py:40
 msgid "City"
 msgstr "Ort"
 
-#: kotti_yellow_pages/views/company.py:41
+#: kotti_yellow_pages/views/company.py:43
 msgid "Country"
 msgstr "Land"
 
-#: kotti_yellow_pages/views/company.py:55
+#: kotti_yellow_pages/views/company.py:57
 msgid "Website URL"
 msgstr "Web URL"
 
-#: kotti_yellow_pages/views/company.py:61
+#: kotti_yellow_pages/views/company.py:63
 msgid "Email address"
 msgstr "Email Adresse"
 
-#: kotti_yellow_pages/views/company.py:75
+#: kotti_yellow_pages/views/company.py:76
 msgid "Latitude"
 msgstr "Breitengrad"
 
-#: kotti_yellow_pages/views/company.py:79
+#: kotti_yellow_pages/views/company.py:80
 msgid "Longitude"
 msgstr "Längengrad"
 
-#: kotti_yellow_pages/views/company.py:83
-msgid "Branches"
-msgstr "Branchen"
-
-#: kotti_yellow_pages/views/company.py:95
+#: kotti_yellow_pages/views/company.py:134
 msgid "Company"
 msgstr "Firma"
+
+#~ msgid "Add your company to this listing"
+#~ msgstr "Als Kooperationspartner bewerben"
 

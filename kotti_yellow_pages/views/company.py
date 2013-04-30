@@ -106,19 +106,6 @@ class YPCompanyForm(FormView):
             k = err.node.name
             company_errors[k] = err.msg
 
-        # update the default company JSOn with the values submitted by the user
-        # company_json = self._default_json
-        # for k in company_json.keys():
-        #     if k == 'branches':
-        #         for b in company_json[k]:
-        #             b['selected'] = b['title'] in e.cstruct[k]
-        #     elif k in ('address', 'location'):
-        #         for k2 in company_json[k]:
-        #             company_json[k][k2] = e.cstruct[k2] or ''
-        #     else:
-        #         company_json[k] = e.cstruct[k] or ''
-
-        # self.request.company_json = json.dumps(company_json)
         self.request.company_errors = json.dumps(company_errors)
 
         return result
@@ -140,10 +127,35 @@ class Add(AddFormView, YPCompanyForm):
         company_edit.need()
 
     @property
+    def success_url(self):
+        """ Redirect to the parent on success (i.e. the YellowPages instance)
+
+        :result: parent's URL.
+        :rtype: str
+        """
+
+        return self.request.resource_url(self.context.parent)
+
+    @property
     def _default_json(self):
+        """ JSON
+        :result: JSON with default values of
+                 :class:`kotti_yellow_pages.resources.YPCompany`
+        :rtype: dict
+        """
+
         return YPCompany().__json__(self.request)
 
     def before(self, form):
+        """
+        Add the JSON representation for a new
+        :class:`kotti_yellow_pages.resources.YPCompany` instance to the request
+        to be able to render our custom (non deform) form.
+
+        :param form: Form instance of the view
+        :type form: :class:`deform.form.Form`
+        """
+
         super(Add, self).before(form)
         self.add_json(form)
 
@@ -161,6 +173,18 @@ class Edit(EditFormView, YPCompanyForm):
     schema_factory = Schema
 
     def __init__(self, context, request, **kwargs):
+        """ Constructor
+
+        :param context: Context item that is edited
+        :type context: :class:`kotti_yellow_pages.resources.YPCompany`
+
+        :param request: Current request
+        :type request: :class:`pyramid.request.Request`
+
+        :param **kwargs: arbitrary keyword arguments that are passed to the
+                         superclass constructor.
+        :type **kwargs: dict
+        """
 
         super(Edit, self).__init__(context, request, **kwargs)
 
@@ -168,9 +192,24 @@ class Edit(EditFormView, YPCompanyForm):
 
     @property
     def _default_json(self):
+        """ JSON serializable dict for the view.
+
+        :result: JSON serializable dict of the context instance.
+        :rtype: dict
+        """
+
         return self.context.__json__(self.request)
 
     def before(self, form):
+        """
+        Add the JSON representation for a new
+        :class:`kotti_yellow_pages.resources.YPCompany` instance to the request
+        to be able to render our custom (non deform) form.
+
+        :param form: Form instance of the view
+        :type form: :class:`deform.form.Form`
+        """
+
         super(Edit, self).before(form)
         self.add_json(form)
 
@@ -192,6 +231,11 @@ class View(BaseView):
     @view_config(name='view',
                  renderer='kotti_yellow_pages:templates/company.pt')
     def view(self):
+        """ Default view for companies.
+
+        :result: Dict needed to render the view.
+        :rtype: dict
+        """
 
         company.need()
 

@@ -2,7 +2,7 @@
  * kotti_yellow_pages AngularJS application
  * @type {angular.module}
 ###
-app = angular.module("kotti_yellow_pages", [])
+app = angular.module("kotti_yellow_pages", ["ui"])
 
 ###*
  * mapquest service
@@ -97,6 +97,7 @@ app.factory "map", ($log, mapquest) ->
 
   $log.info("Initializing map... ")
 
+  $('#map').height($(window).height() - 40)
   map = L.map("map", zoomControl: true)
   map.latLngForAddress = mapquest.latLngForAddress
   mapquest.tileLayer.addTo(map)

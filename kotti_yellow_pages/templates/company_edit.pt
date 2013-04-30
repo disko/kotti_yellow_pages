@@ -120,7 +120,7 @@
             </div>
           </fieldset>
 
-          <fieldset ng-form="geolocationSubform" ng-show="true">
+          <fieldset ng-form="geolocationSubform" ng-show="false">
             <legend i18n:translate="">
               Geolocation
             </legend>
@@ -149,7 +149,7 @@
       <!-- TODO: add scrollfix
                  (e.g. http://angular-ui.github.io/#directives-scrollfix) -->
       <div class="span6">
-        <div id="map"><!-- the map widget --></div>
+        <div id="map" ui-scrollfix="50"><!-- the map widget --></div>
       </div>
     </div>
   </div>
