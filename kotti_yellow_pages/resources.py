@@ -8,12 +8,16 @@ Created on 2013-04-12
 from kotti import Base
 from kotti import DBSession
 from kotti.resources import Content
+from phonenumbers import parse
+from phonenumbers import format_number
+from phonenumbers import PhoneNumberFormat
 from sqlalchemy import Column
 from sqlalchemy import Float
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy import Unicode
 from sqlalchemy.ext.associationproxy import association_proxy
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import backref
 from sqlalchemy.orm import relationship
 from zope.interface import implements
@@ -22,6 +26,15 @@ from kotti_yellow_pages import _
 from kotti_yellow_pages.interfaces import IYPBranchWorkflow
 from kotti_yellow_pages.interfaces import IYPCompanyWorkflow
 from kotti_yellow_pages.interfaces import IYellowPagesWorkflow
+
+
+def format_phone(number, country, _format=PhoneNumberFormat.INTERNATIONAL):
+    try:
+        number = format_number(parse(number, country), _format)
+    except:
+        pass
+
+    return number
 
 
 class YellowPages(Content):
@@ -150,8 +163,8 @@ class YPCompany(Content):
     city = Column(Unicode, nullable=False)
     country = Column(Unicode, nullable=False)
 
-    telephone = Column(Unicode, nullable=False)
-    facsimile = Column(Unicode, nullable=True)
+    _telephone = Column('telephone', Unicode, nullable=False)
+    _facsimile = Column('facsimile', Unicode, nullable=True)
     url = Column(Unicode, nullable=True)
     email = Column(Unicode, nullable=True)
 
@@ -159,6 +172,22 @@ class YPCompany(Content):
 
     lat = Column(Float, nullable=True)
     lng = Column(Float, nullable=True)
+
+    @hybrid_property
+    def telephone(self):
+        return self._telephone
+
+    @telephone.setter
+    def telephone_setter(self, telephone):
+        self._telephone = format_phone(telephone, self.country)
+
+    @hybrid_property
+    def facsimile(self):
+        return self._facsimile
+
+    @facsimile.setter
+    def facsimile_setter(self, facsimile):
+        self._facsimile = format_phone(facsimile, self.country)
 
     _branches = relationship(
         YPCompanyToBranch,
@@ -198,24 +227,6 @@ class YPCompany(Content):
         self.lng = lng
         self.branches = branches
 
-    # def __json__(self, request):
-    #     return {
-    #         'title': self.title,
-    #         'name': self.title,
-    #         'street': self.street,
-    #         'zipcode': self.zipcode,
-    #         'city': self.city,
-    #         'country': self.country,
-    #         'telephone': self.telephone,
-    #         'facsimile': self.facsimile,
-    #         'contact_person': self.contact_person,
-    #         'url': self.url,
-    #         'email': self.email,
-    #         'latitude': self.latitude,
-    #         'longitude': self.longitude,
-    #         'branches': [b for b in self.branches],
-    #     }
-
     def selectable_branches(self, request):
 
         if request.context == self:
@@ -252,9 +263,11 @@ class YPCompany(Content):
                 return getattr(self, key)
 
         result = {
+            'id': get('id'),
             'title': get('title'),
             'branches': branches,
             'telephone': get('telephone'),
+            'tel_url': get('telephone'),
             'facsimile': get('facsimile'),
             'url': get('url'),
             'email': get('email'),
