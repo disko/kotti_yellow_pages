@@ -129,7 +129,9 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
     map.fitBounds(map.bounds);
     return map.on('moveend dragend zoomend', function(e) {
       $log.info(e);
-      return map.getBounds();
+      return $scope.$apply(function() {
+        return $scope.map.getBounds();
+      });
     });
   };
   branchesInitialized = $q.defer();

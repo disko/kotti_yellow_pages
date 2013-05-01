@@ -63,7 +63,8 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
     # Add a handler for all relevant map events.
     map.on 'moveend dragend zoomend', (e) ->
       $log.info(e)
-      map.getBounds()
+      $scope.$apply ->
+        $scope.map.getBounds()
 
 
   branchesInitialized = $q.defer()
