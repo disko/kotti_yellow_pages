@@ -31,13 +31,13 @@
             <th i18n:translate="">Company</th>
             <th></th>
           </thead>
-          <tbody ng-repeat="company in companies" ng-show="company.visible()">
+          <tbody ng-repeat="company in companies | orderBy:company.distanceToMapCenter()" ng-show="company.visible()">
             <tr ng-hide="company.showDetails"
                 ng-click="company.showDetails=true"
                 ui-animate>
               <td>{{company.address.zipcode}}</td>
               <td>{{company.address.city}}</td>
-              <td>{{company.title}}</td>
+              <td>{{company.title}}<br/>{{company.distanceToMapCenter()}}km</td>
               <td>
                 <a href="">
                   <i class="icon-chevron-down"></i>

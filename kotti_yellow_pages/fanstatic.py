@@ -53,7 +53,7 @@ kotti_yellow_pages = Resource(
     library,
     'js/kotti_yellow_pages.js',
     minified='js/kotti_yellow_pages.min.js',
-    depends=[jquery, angular, leaflet, ]
+    depends=[jquery, angular, angular_ui, leaflet, ]
 )
 
 pages_js = Resource(

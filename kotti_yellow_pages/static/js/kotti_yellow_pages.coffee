@@ -2,7 +2,7 @@
  * kotti_yellow_pages AngularJS application
  * @type {angular.module}
 ###
-app = angular.module("kotti_yellow_pages", [])
+app = angular.module("kotti_yellow_pages", ["ui"])
 
 ###*
  * mapquest service

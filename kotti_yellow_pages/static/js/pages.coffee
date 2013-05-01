@@ -39,6 +39,11 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
         # Return true if all of the above conditions are met.
         return anyBranchVisible and inMapBounds
 
+      company.distanceToMapCenter = ->
+        if not @latlng
+          return null
+        return Math.round(@latlng.distanceTo(map.getCenter()) / 1000, 10)
+
   ###*
    * Initialize the branch obejcts.
   ###

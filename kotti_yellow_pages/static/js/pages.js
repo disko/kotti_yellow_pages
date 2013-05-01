@@ -58,7 +58,7 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
        * @return {bool} true: visible, false: invisible
       */
 
-      _results.push(company.visible = function() {
+      company.visible = function() {
         var anyBranchVisible, inMapBounds;
 
         anyBranchVisible = __indexOf.call((function() {
@@ -74,6 +74,12 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
         }).call(this), true) >= 0;
         inMapBounds = this.latlng && $scope.map.getBounds().contains(this.latlng);
         return anyBranchVisible && inMapBounds;
+      };
+      _results.push(company.distanceToMapCenter = function() {
+        if (!this.latlng) {
+          return null;
+        }
+        return Math.round(this.latlng.distanceTo(map.getCenter()) / 1000, 10);
       });
     }
     return _results;
