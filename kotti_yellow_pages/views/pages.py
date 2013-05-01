@@ -56,15 +56,16 @@ class YellowPagesView(BaseView):
             {
                 "title": b.title,
                 "visible": True,
-                "companies": [
-                    c.__json__(self.request) for c in
-                    self.context.companies_with_permission(self.request)
-                    if b.title in c.branches
-                ]
+                "companies": [],
             }
             for b in self.context.branches_with_permission(self.request)
         ]
+        companies = [
+            c.__json__(self.request) for c in
+            self.context.companies_with_permission(self.request)
+        ]
 
         return {
-            'branches_json': json.dumps(branches)
+            'branches_json': json.dumps(branches),
+            'companies_json': json.dumps(companies),
         }

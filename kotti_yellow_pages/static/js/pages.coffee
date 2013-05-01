@@ -1,24 +1,104 @@
-PagesCtrl = ($scope, $http, $window, $log, map) ->
+PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
 
-  $scope.$watch 'branches', (branches) ->
-    $log.info "Initializing branches"
-    $window.branches = branches
-    $window.map = $scope.map = map
-    createMapElements()
-    $scope.updateFilter()
+  ###*
+   * Initialize the company objects.
+  ###
+  initCompanies = ->
 
-  createMapElements = ->
-    $log.info "createMapElements"
+    $log.info "initCompanies"
 
+    for company in $scope.companies
+
+      # make company.branches an array of actual branch objects
+      _branch_names = (b.title for b in company.branches when b.selected is true)
+      company.branches = (b for b in $scope.branches when b.title in _branch_names)
+
+      # also append the company to the branche's companies array
+      for branch in company.branches
+        branch.companies.push(company)
+
+      # create a marker object on the company if it contains the required
+      # (non empty) lat / lng attributes
+      if not company.marker and company.location.lat and company.location.lng
+        company.latlng = new L.LatLng(company.location.lat, company.location.lng)
+        company.marker = new L.marker(company.latlng)
+
+      ###*
+       * Determine if the company shoul be visible in the application's current
+       * state.
+       * @return {bool} true: visible, false: invisible
+      ###
+      company.visible = ->
+        # Determine if any of the company's branches is visible.
+        anyBranchVisible = true in (b.visible for b in @branches)
+
+        # Determine if the company's marker is within the current bounds of the
+        # map.
+        inMapBounds = @latlng and $scope.map.getBounds().contains(@latlng)
+
+        # Return true if all of the above conditions are met.
+        return anyBranchVisible and inMapBounds
+
+  ###*
+   * Initialize the branch obejcts.
+  ###
+  initBranches = ->
+    $log.info "initBranches"
+
+    # Put a bounds object on each branch that can contain all of its companies.
     for branch in $scope.branches
-      for company in branch.companies
-        if not company.marker and company.location.lat and company.location.lng
-          company.latlng = new L.LatLng(company.location.lat, company.location.lng)
-          company.marker = new L.marker(company.latlng)
       branch.bounds = new L.LatLngBounds((c.latlng for c in branch.companies when c.latlng))
 
+  ###*
+   * Initialize the map.
+  ###
+  initMap = ->
+    $log.info "initMap"
+    $window.map = $scope.map = map
+
+    # Fit the map to a new bounds object that can contain all branches' bounds.
     map.bounds = new L.LatLngBounds((b.bounds for b in $scope.branches))
     map.fitBounds(map.bounds)
+
+    # Add a handler for all relevant map events.
+    map.on 'moveend dragend zoomend', (e) ->
+      $log.info(e)
+      map.getBounds()
+
+
+  branchesInitialized = $q.defer()
+  ###*
+   * Wait for the branches object to appear on the scope, then resolve the
+   * branchesInitialized promise.
+  ###
+  $scope.$watch 'branches', (branches) ->
+    $log.info "Got #{branches.length} branches."
+    $window.branches = branches
+    branchesInitialized.resolve()
+
+  companiesInitialized = $q.defer()
+  ###*
+   * Wait for the companies object to appear on the scope, then resolve the
+   * companiesInitialized promise.
+  ###
+  $scope.$watch 'companies', (companies) ->
+    $log.info "Got #{companies.length} companies."
+    $window.companies = companies
+    companiesInitialized.resolve()
+
+  ###*
+   * Wait for the branchesInitialized and companiesInitialized promises to be
+   * resolved, then initialize the application.
+  ###
+  $q.all([branchesInitialized.promise, companiesInitialized.promise]).then ->
+
+    $log.info "Initializing..."
+
+    initCompanies()
+    initBranches()
+    initMap()
+
+    $scope.updateFilter()
 
   $scope.updateFilter = ->
     $log.info "updateFilter"
@@ -36,56 +116,3 @@ PagesCtrl = ($scope, $http, $window, $log, map) ->
     if bounds.length > 0
 
       map.fitBounds(bounds)
-
-#    debugger
-
-  # $http.get(window.context_url + "json").success (data) ->
-
-  #   # center for the map
-  #   center = new L.LatLng(
-  #     (data.min_lat + data.max_lat) / 2.0,
-  #     (data.min_lng + data.max_lng) / 2.0)
-
-  #   # bounds for the map
-  #   bounds = new L.LatLngBounds(
-  #     new L.LatLng(data.min_lat, data.min_lng),
-  #     new L.LatLng(data.max_lat, data.max_lng))
-
-  #   # create the map
-  #   map = L.map("map",
-  #     zoomControl: true
-  #   ).setView(center).fitBounds(bounds)
-
-  #   mapquest = tiles.addTo(map)
-
-  #   # process the branches
-  #   $scope.branches = {}
-  #   for b in data.branches
-  #     l = new L.LayerGroup()
-  #     l.visible = true
-  #     $scope.branches[b.title] = l
-  #     l.addTo(map)
-
-
-  #   $scope.companies = []
-  #   for c in data.companies
-  #     c.visible = true
-  #     m = new L.Marker(new L.LatLng(c.latitude, c.longitude))
-  #     for b in c.branches
-  #       m.addTo($scope.branches[b])
-  #     $scope.companies.push(m)
-
-
-  #   i = $scope.companies.length - 1
-
-  #   while i >= 0
-  #     c = $scope.companies[i]
-  #     L.marker(new L.LatLng(c.latitude, c.longitude),
-  #       title: c.title
-  #       riseOnHover: true
-  #     ).addTo(map).bindPopup("<h3>" + c.title + "</h3><p>" + c.street + "</p>").on "click", (e) ->
-  #       @openPopup()
-
-  #     i--
-
-  # $scope.$watch "confirmed", (newValue, oldValue) ->

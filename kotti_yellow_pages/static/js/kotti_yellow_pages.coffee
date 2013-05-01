@@ -80,8 +80,6 @@ app.factory "mapquest", ($log, $http) ->
 ###
 app.factory "map", ($log, mapquest) ->
 
-  $log.info("Initializing map... ")
-
   $('#map').height($(window).height() - 40)
   map = L.map("map", zoomControl: true)
   map.latLngForAddress = mapquest.latLngForAddress

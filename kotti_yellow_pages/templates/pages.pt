@@ -10,12 +10,12 @@
   </more>
   <article metal:fill-slot="content" class="yp-pages view ng-cloak"
            ng-app="kotti_yellow_pages" ng-controller="PagesCtrl"
-           ng-init="branches = ${branches_json};">
+           ng-init="branches = ${branches_json}; companies = ${companies_json};">
     <h1>${context.title}</h1>
     <p class="description">
       ${context.description}
     </p>
-    <p>
+    <p class="ng-cloak">
       <span i18n:translate="">Show branches</span>:
       <span ng-repeat="branch in branches">
         <input type="checkbox" ng-model="branch.visible"
@@ -23,7 +23,73 @@
       </span>
     </p>
     <div class="row">
-      <div class="span6">
+      <div class="span6 ng-cloak">
+        <table class="table table-hover">
+          <thead>
+            <th i18n:translate="">Zipcode</th>
+            <th i18n:translate="">City</th>
+            <th i18n:translate="">Company</th>
+            <th></th>
+          </thead>
+          <tbody ng-repeat="company in companies" ng-show="company.visible()">
+            <tr ng-hide="company.showDetails"
+                ng-click="company.showDetails=true"
+                ui-animate>
+              <td>{{company.address.zipcode}}</td>
+              <td>{{company.address.city}}</td>
+              <td>{{company.title}}</td>
+              <td>
+                <a href="">
+                  <i class="icon-chevron-down"></i>
+                </a>
+              </td>
+            </tr>
+            <tr ng-show="company.showDetails"
+                ng-click="company.showDetails=false"
+                ui-animate>
+              <td colspan="3">
+                <h3>{{company.title}}</h3>
+                <p ng-show="company.contact_person">
+                  {{company.contact_person}}
+                </p>
+                <p>
+                  {{company.address.street}}<br/>
+                  {{company.address.country}}-{{company.address.zipcode}}
+                  {{company.address.city}}
+                </p>
+                <table class="table table-condensed table-striped table-bordered">
+                  <tr ng-show="company.telephone">
+                    <td>Fon</td>
+                    <td>{{company.telephone}}</td>
+                  </tr>
+                  <tr ng-show="company.facsimile">
+                    <td>Fax</td>
+                    <td>{{company.facsimile}}</td>
+                  </tr>
+                  <tr ng-show="company.email">
+                    <td>Email</td>
+                    <td>
+                      <a href="mailto:{{company.email}}">{{company.email}}</a>
+                    </td>
+                  </tr>
+                  <tr ng-show="company.url">
+                    <td>Web</td>
+                    <td>
+                      <a href="{{company.url}}" target="_blank">
+                        {{company.url}}
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+              <td>
+                <a href="">
+                  <i class="icon-chevron-up"></i>
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
         <div ng-repeat="company in companies" tal:condition="False">
           <div>
             <a ng-click="company.show_details = true" ng-hide="company.show_details">
