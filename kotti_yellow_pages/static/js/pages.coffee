@@ -25,10 +25,19 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
       for branch in company.branches
         branch.companies.push(company)
 
+      company.showDetails = (show, recurse=true) ->
+        if show in [true, false]
+          @_showDetails = show
+        if show and recurse
+          for c in $scope.companies
+            if c != @
+              c.showDetails(false, false)
+        return @_showDetails
+
       company.onClick = (e) ->
         $scope.safeApply ->
           map.panTo(e.target.company.latlng)
-          e.target.company.showDetails = true
+          e.target.company.showDetails(true)
           $scope.recalcDistances()
 
       # create a marker object on the company if it contains the required

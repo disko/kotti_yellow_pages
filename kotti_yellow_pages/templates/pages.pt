@@ -54,19 +54,15 @@
           </thead>
           <tbody ng-repeat="company in companies | orderBy:distanceForCompany"
                  ng-show="company.visible()">
-            <tr ng-hide="company.showDetails"
-                ng-click="company.showDetails=true">
+            <tr ng-hide="company.showDetails()"
+                ng-click="company.showDetails(true)">
               <td>{{company.address.zipcode}}</td>
               <td>{{company.address.city}}</td>
               <td>{{company.title}}<br/>{{company.distance}}km</td>
-              <td>
-                <a href="">
-                  <i class="icon-chevron-down"></i>
-                </a>
-              </td>
+              <td><a href=""><i class="icon-chevron-down"></i></a></td>
             </tr>
-            <tr ng-show="company.showDetails"
-                ng-click="company.showDetails=false">
+            <tr ng-show="company.showDetails()"
+                ng-click="company.showDetails(false)">
               <td colspan="3">
                 <h3>{{company.title}}</h3>
                 <p ng-show="company.contact_person">
@@ -102,11 +98,7 @@
                   </tr>
                 </table>
               </td>
-              <td>
-                <a href="">
-                  <i class="icon-chevron-up"></i>
-                </a>
-              </td>
+              <td><a href=""><i class="icon-chevron-up"></i></a></td>
             </tr>
           </tbody>
         </table>

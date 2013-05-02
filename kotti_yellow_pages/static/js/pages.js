@@ -60,10 +60,30 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
         branch = _ref1[_j];
         branch.companies.push(company);
       }
+      company.showDetails = function(show, recurse) {
+        var c, _k, _len2, _ref2;
+
+        if (recurse == null) {
+          recurse = true;
+        }
+        if (show === true || show === false) {
+          this._showDetails = show;
+        }
+        if (show && recurse) {
+          _ref2 = $scope.companies;
+          for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+            c = _ref2[_k];
+            if (c !== this) {
+              c.showDetails(false, false);
+            }
+          }
+        }
+        return this._showDetails;
+      };
       company.onClick = function(e) {
         return $scope.safeApply(function() {
           map.panTo(e.target.company.latlng);
-          e.target.company.showDetails = true;
+          e.target.company.showDetails(true);
           return $scope.recalcDistances();
         });
       };
