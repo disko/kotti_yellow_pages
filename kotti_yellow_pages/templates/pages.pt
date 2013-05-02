@@ -15,13 +15,34 @@
     <p class="description">
       ${context.description}
     </p>
-    <p class="ng-cloak">
-      <span i18n:translate="">Show branches</span>:
-      <span ng-repeat="branch in branches">
-        <input type="checkbox" ng-model="branch.visible"
-               ng-change="updateFilter()" /> {{branch.title}}
-      </span>
-    </p>
+    <form class="form-vertical row">
+      <div class="control-group span6">
+        <label class="control-label" i18n:translate="">Sort by</label>
+        <div class="controls">
+          <select ng-model="listOrderBy">
+            <option value="distanceToMapCenter" i18n:translate="">Distance to</option>
+            <option value="companyName" i18n:translate="">Company name</option>
+            <option value="companyZipcode" i18n:translate="">Zipcode</option>
+          </select>
+        </div>
+        <div class="controls" ui-show="listOrderBy=='distanceToMapCenter'"
+             ui-hide="listOrderBy!='distanceToMapCenter'">
+          <select ng-model="user.country">
+            <option value="DE">Germany</option>
+          </select>
+          <input ng-model="user.zipcode" type="text" class="span2" value="47877" />
+        </div>
+      </div>
+      <div class="control-group span6">
+        <label class="control-label" i18n:translate="">Show branches</label>
+        <div class="controls" ng-repeat="branch in branches">
+          <label class="checkbox">
+            <input type="checkbox" ng-model="branch.visible"
+                   ng-change="updateFilter()" /> {{branch.title}}
+          </label>
+        </div>
+      </div>
+    </form>
     <div class="row">
       <div class="span6 ng-cloak">
         <table class="table table-hover">
@@ -31,13 +52,13 @@
             <th i18n:translate="">Company</th>
             <th></th>
           </thead>
-          <tbody ng-repeat="company in companies | orderBy:company.distanceToMapCenter()" ng-show="company.visible()">
+          <tbody ng-repeat="company in companies | orderBy:distanceForCompany"
+                 ng-show="company.visible()">
             <tr ng-hide="company.showDetails"
-                ng-click="company.showDetails=true"
-                ui-animate>
+                ng-click="company.showDetails=true">
               <td>{{company.address.zipcode}}</td>
               <td>{{company.address.city}}</td>
-              <td>{{company.title}}<br/>{{company.distanceToMapCenter()}}km</td>
+              <td>{{company.title}}<br/>{{company.distance}}km</td>
               <td>
                 <a href="">
                   <i class="icon-chevron-down"></i>
@@ -45,8 +66,7 @@
               </td>
             </tr>
             <tr ng-show="company.showDetails"
-                ng-click="company.showDetails=false"
-                ui-animate>
+                ng-click="company.showDetails=false">
               <td colspan="3">
                 <h3>{{company.title}}</h3>
                 <p ng-show="company.contact_person">

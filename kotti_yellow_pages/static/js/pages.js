@@ -3,11 +3,23 @@ var PagesCtrl,
   __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 PagesCtrl = function($scope, $http, $window, $log, $q, map) {
+  var branchesInitialized, companiesInitialized, initBranches, initCompanies, initMap;
+
+  $scope.safeApply = function(fn) {
+    var phase;
+
+    phase = this.$root.$$phase;
+    if (phase === '$apply' || phase === '$digest') {
+      if (fn && (typeof fn === 'function')) {
+        return fn();
+      }
+    } else {
+      return this.$apply(fn);
+    }
+  };
   /**
    * Initialize the company objects.
   */
-
-  var branchesInitialized, companiesInitialized, initBranches, initCompanies, initMap;
 
   initCompanies = function() {
     var b, branch, company, _branch_names, _i, _j, _len, _len1, _ref, _ref1, _results;
@@ -48,9 +60,21 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
         branch = _ref1[_j];
         branch.companies.push(company);
       }
+      company.onClick = function(e) {
+        return $scope.safeApply(function() {
+          map.panTo(e.target.company.latlng);
+          e.target.company.showDetails = true;
+          return $scope.recalcDistances();
+        });
+      };
       if (!company.marker && company.location.lat && company.location.lng) {
         company.latlng = new L.LatLng(company.location.lat, company.location.lng);
-        company.marker = new L.marker(company.latlng);
+        company.marker = new L.marker(company.latlng, {
+          title: company.title,
+          riseOnHover: true
+        });
+        company.marker.company = company;
+        company.marker.on("click", company.onClick);
       }
       /**
        * Determine if the company shoul be visible in the application's current
@@ -75,12 +99,36 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
         inMapBounds = this.latlng && $scope.map.getBounds().contains(this.latlng);
         return anyBranchVisible && inMapBounds;
       };
+      /**
+       * Determine the distance to the current center of the map.
+       * @return {int} Distance in km
+      */
+
       _results.push(company.distanceToMapCenter = function() {
-        if (!this.latlng) {
-          return null;
+        if (!(this.latlng && $scope.mapCenter)) {
+          return this.distance = null;
         }
-        return Math.round(this.latlng.distanceTo(map.getCenter()) / 1000, 10);
+        return this.distance = Math.round(this.latlng.distanceTo($scope.mapCenter) / 1000, 10);
       });
+    }
+    return _results;
+  };
+  $scope.distanceForCompany = function(company) {
+    if (company.distanceToMapCenter) {
+      return company.distanceToMapCenter();
+    } else {
+      return false;
+    }
+  };
+  $scope.recalcDistances = function() {
+    var c, _i, _len, _results;
+
+    _results = [];
+    for (_i = 0, _len = companies.length; _i < _len; _i++) {
+      c = companies[_i];
+      if (c.distanceToMapCenter) {
+        _results.push(c.distanceToMapCenter());
+      }
     }
     return _results;
   };
@@ -121,6 +169,13 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
 
     $log.info("initMap");
     $window.map = $scope.map = map;
+    map.on('load moveend dragend zoomend', function(e) {
+      return $scope.safeApply(function() {
+        $scope.map.getBounds();
+        $scope.mapCenter = $scope.map.getCenter();
+        return $scope.recalcDistances();
+      });
+    });
     map.bounds = new L.LatLngBounds((function() {
       var _i, _len, _ref, _results;
 
@@ -132,13 +187,35 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
       }
       return _results;
     })());
-    map.fitBounds(map.bounds);
-    return map.on('moveend dragend zoomend', function(e) {
-      $log.info(e);
-      return $scope.$apply(function() {
-        return $scope.map.getBounds();
-      });
-    });
+    return map.fitBounds(map.bounds);
+  };
+  $scope.updateFilter = function() {
+    var bounds, branch, company, _i, _j, _len, _len1, _ref, _ref1;
+
+    $log.info("updateFilter");
+    bounds = [];
+    _ref = $scope.branches;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      branch = _ref[_i];
+      if (branch.visible) {
+        bounds.push(branch.bounds);
+      }
+      _ref1 = branch.companies;
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        company = _ref1[_j];
+        if (company.marker) {
+          if (branch.visible && !map.hasLayer(company.marker)) {
+            map.addLayer(company.marker);
+          }
+          if (!branch.visible && map.hasLayer(company.marker)) {
+            map.removeLayer(company.marker);
+          }
+        }
+      }
+    }
+    if (bounds.length > 0) {
+      return map.fitBounds(bounds);
+    }
   };
   branchesInitialized = $q.defer();
   /**
@@ -167,39 +244,28 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
    * resolved, then initialize the application.
   */
 
-  $q.all([branchesInitialized.promise, companiesInitialized.promise]).then(function() {
+  return $q.all([branchesInitialized.promise, companiesInitialized.promise]).then(function() {
     $log.info("Initializing...");
     initCompanies();
     initBranches();
     initMap();
-    return $scope.updateFilter();
-  });
-  return $scope.updateFilter = function() {
-    var bounds, branch, company, _i, _j, _len, _len1, _ref, _ref1;
+    $scope.listOrderBy = 'distanceToMapCenter';
+    $window.user = $scope.user = {
+      zipcode: 47877,
+      country: 'DE'
+    };
+    map.latLngForAddress($scope.user).then(function(response) {
+      var latlng, location, locations;
 
-    $log.info("updateFilter");
-    bounds = [];
-    _ref = $scope.branches;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      branch = _ref[_i];
-      if (branch.visible) {
-        bounds.push(branch.bounds);
-      }
-      _ref1 = branch.companies;
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        company = _ref1[_j];
-        if (company.marker) {
-          if (branch.visible && !map.hasLayer(company.marker)) {
-            map.addLayer(company.marker);
-          }
-          if (!branch.visible && map.hasLayer(company.marker)) {
-            map.removeLayer(company.marker);
-          }
+      if (response.length > 0) {
+        locations = response[0].locations;
+        if (locations.length > 0) {
+          location = response[0].locations[0];
+          latlng = location.latLng;
+          return $scope.user.latlng = new L.LatLng(latlng.lat, latlng.lng);
         }
       }
-    }
-    if (bounds.length > 0) {
-      return map.fitBounds(bounds);
-    }
-  };
+    });
+    return $scope.updateFilter();
+  });
 };

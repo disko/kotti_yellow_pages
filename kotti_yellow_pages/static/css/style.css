@@ -1,12 +1,17 @@
-tr {
-  transition: all 1s ease;
-  -o-transition: all 1s ease;
-  -moz-transition: all 1s ease;
-  -webkit-transition: all 1s ease;
+.ui-show {
+  transition: max-height 1s ease;
+  -o-transition: max-height 1s ease;
+  -moz-transition: max-height 1s ease;
+  -webkit-transition: max-height 1s ease;
   max-height: 2000px; /* 1000px works too */
 }
 /* The 'hidden' state to transition from & to */
-tr.ui-animate {
+.ui-hide {
+  overflow: hidden;
+  transition: max-height 1s ease;
+  -o-transition: max-height 1s ease;
+  -moz-transition: max-height 1s ease;
+  -webkit-transition: max-height 1s ease;
   opacity: 0;
   max-height: 0;
 }
