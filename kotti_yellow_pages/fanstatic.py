@@ -49,11 +49,26 @@ leaflet = Resource(
     minified='js/leaflet.css.bundle.min.js'
 )
 
+leaflet_awesome_markers_js = Resource(
+    library,
+    'js/leaflet.awesome-markers.js',
+    minified='js/leaflet.awesome-markers.min.js',
+    depends=[leaflet, ]
+)
+leaflet_awesome_markers_css = Resource(
+    library,
+    'css/leaflet.awesome-markers.css',
+    minified='css/leaflet.awesome-markers.min.css',
+    depends=[leaflet, ]
+)
+leaflet_awesome_markers = Group(
+    [leaflet_awesome_markers_js, leaflet_awesome_markers_css])
+
 kotti_yellow_pages = Resource(
     library,
     'js/kotti_yellow_pages.js',
     minified='js/kotti_yellow_pages.min.js',
-    depends=[jquery, angular, angular_ui, leaflet, ]
+    depends=[jquery, angular, angular_ui, leaflet, leaflet_awesome_markers]
 )
 
 pages_js = Resource(

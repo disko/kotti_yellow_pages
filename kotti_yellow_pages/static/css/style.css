@@ -1,3 +1,6 @@
+.table-companies:hover {
+    cursor: pointer;
+}
 .ui-show {
   transition: max-height 1s ease;
   -o-transition: max-height 1s ease;

@@ -20,13 +20,14 @@
         <label class="control-label" i18n:translate="">Sort by</label>
         <div class="controls">
           <select ng-model="listOrderBy">
-            <option value="distanceToMapCenter" i18n:translate="">Distance to</option>
+            <option value="distanceToMapCenter" i18n:translate="">Distance to map center</option>
+            <option value="distanceToZipcode" i18n:translate="">Distance to zipcode</option>
             <option value="companyName" i18n:translate="">Company name</option>
             <option value="companyZipcode" i18n:translate="">Zipcode</option>
           </select>
         </div>
-        <div class="controls" ui-show="listOrderBy=='distanceToMapCenter'"
-             ui-hide="listOrderBy!='distanceToMapCenter'">
+        <div class="controls" ui-show="listOrderBy=='distanceToZipcode'"
+             ui-hide="listOrderBy!='distanceToZipcode'">
           <select ng-model="user.country">
             <option value="DE">Germany</option>
           </select>
@@ -38,21 +39,21 @@
         <div class="controls" ng-repeat="branch in branches">
           <label class="checkbox">
             <input type="checkbox" ng-model="branch.visible"
-                   ng-change="updateFilter()" /> {{branch.title}}
+                   ng-change="updateBranchesVisible()" /> {{branch.title}}
           </label>
         </div>
       </div>
     </form>
     <div class="row">
       <div class="span6 ng-cloak">
-        <table class="table table-hover">
+        <table class="table table-hover table-companies">
           <thead>
             <th i18n:translate="">Zipcode</th>
             <th i18n:translate="">City</th>
             <th i18n:translate="">Company</th>
             <th></th>
           </thead>
-          <tbody ng-repeat="company in companies | orderBy:distanceForCompany"
+          <tbody ng-repeat="company in companies | orderBy:companyListOrder"
                  ng-show="company.visible()">
             <tr ng-hide="company.showDetails()"
                 ng-click="company.showDetails(true)">

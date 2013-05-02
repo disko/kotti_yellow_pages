@@ -22,7 +22,7 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
   */
 
   initCompanies = function() {
-    var b, branch, company, _branch_names, _i, _j, _len, _len1, _ref, _ref1, _results;
+    var b, branch, company, marker, _branch_names, _i, _j, _len, _len1, _ref, _ref1, _results;
 
     $log.info("initCompanies");
     _ref = $scope.companies;
@@ -68,6 +68,13 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
         }
         if (show === true || show === false) {
           this._showDetails = show;
+          if (this.marker) {
+            if (show) {
+              this.marker.setIcon(this.marker.selectedIcon);
+            } else {
+              this.marker.setIcon(this.marker.defaultIcon);
+            }
+          }
         }
         if (show && recurse) {
           _ref2 = $scope.companies;
@@ -81,7 +88,9 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
         return this._showDetails;
       };
       company.onClick = function(e) {
+        $log.info("click");
         return $scope.safeApply(function() {
+          e.target.setIcon(e.target.selectedIcon);
           map.panTo(e.target.company.latlng);
           e.target.company.showDetails(true);
           return $scope.recalcDistances();
@@ -89,12 +98,43 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
       };
       if (!company.marker && company.location.lat && company.location.lng) {
         company.latlng = new L.LatLng(company.location.lat, company.location.lng);
-        company.marker = new L.marker(company.latlng, {
+        marker = new L.marker(company.latlng, {
           title: company.title,
-          riseOnHover: true
+          riseOnHover: true,
+          riseOffset: 1000
         });
-        company.marker.company = company;
-        company.marker.on("click", company.onClick);
+        marker.company = company;
+        marker.defaultIcon = map.makeIcon({
+          color: 'darkblue',
+          icon: 'question-sign'
+        });
+        marker.hoverIcon = map.makeIcon({
+          color: 'blue',
+          icon: 'info-sign'
+        });
+        marker.selectedIcon = map.makeIcon({
+          color: 'red',
+          icon: 'star'
+        });
+        marker.setIcon(marker.defaultIcon);
+        marker.on("click", company.onClick);
+        marker.on("mouseover", function(e) {
+          var _ref2;
+
+          marker = e.target;
+          if ((_ref2 = marker.options.icon) !== marker.selectedIcon && _ref2 !== marker.hoverIcon) {
+            return marker.setIcon(marker.hoverIcon);
+          }
+        });
+        marker.on("mouseout", function(e) {
+          var _ref2;
+
+          marker = e.target;
+          if ((_ref2 = marker.options.icon) !== marker.selectedIcon && _ref2 !== marker.defaultIcon) {
+            return marker.setIcon(marker.defaultIcon);
+          }
+        });
+        company.marker = marker;
       }
       /**
        * Determine if the company shoul be visible in the application's current
@@ -124,21 +164,48 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
        * @return {int} Distance in km
       */
 
-      _results.push(company.distanceToMapCenter = function() {
+      company.distanceToMapCenter = function() {
         if (!(this.latlng && $scope.mapCenter)) {
           return this.distance = null;
         }
         return this.distance = Math.round(this.latlng.distanceTo($scope.mapCenter) / 1000, 10);
+      };
+      /**
+       * Determine the distance to the location provided by the user.
+       * @return {int} Distance in km
+      */
+
+      _results.push(company.distanceToUser = function() {
+        if (!(this.latlng && $scope.user.latlng)) {
+          return this.distance = null;
+        }
+        return this.distance = Math.round(this.latlng.distanceTo($scope.user.latlng) / 1000, 10);
       });
     }
     return _results;
   };
-  $scope.distanceForCompany = function(company) {
+  $scope.distanceToMapCenter = function(company) {
     if (company.distanceToMapCenter) {
       return company.distanceToMapCenter();
     } else {
       return false;
     }
+  };
+  $scope.distanceToZipcode = function(company) {
+    if (company.distanceToUser) {
+      return company.distanceToUser();
+    } else {
+      return false;
+    }
+  };
+  $scope.companyName = function(company) {
+    return company.title;
+  };
+  $scope.companyZipcode = function(company) {
+    return company.zipcode;
+  };
+  $scope.companyListOrder = function(company) {
+    return $scope[$scope.listOrderBy](company);
   };
   $scope.recalcDistances = function() {
     var c, _i, _len, _results;
@@ -209,33 +276,38 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
     })());
     return map.fitBounds(map.bounds);
   };
-  $scope.updateFilter = function() {
-    var bounds, branch, company, _i, _j, _len, _len1, _ref, _ref1;
+  $scope.updateBranchesVisible = function() {
+    var branch, company, _i, _len, _ref, _results;
 
-    $log.info("updateFilter");
-    bounds = [];
+    $log.info("updateBranchesVisible");
     _ref = $scope.branches;
+    _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       branch = _ref[_i];
-      if (branch.visible) {
-        bounds.push(branch.bounds);
-      }
-      _ref1 = branch.companies;
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        company = _ref1[_j];
-        if (company.marker) {
-          if (branch.visible && !map.hasLayer(company.marker)) {
-            map.addLayer(company.marker);
-          }
-          if (!branch.visible && map.hasLayer(company.marker)) {
-            map.removeLayer(company.marker);
+      _results.push((function() {
+        var _j, _len1, _ref1, _results1;
+
+        _ref1 = branch.companies;
+        _results1 = [];
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          company = _ref1[_j];
+          if (company.marker) {
+            if (branch.visible && !map.hasLayer(company.marker)) {
+              map.addLayer(company.marker);
+            }
+            if (!branch.visible && map.hasLayer(company.marker)) {
+              _results1.push(map.removeLayer(company.marker));
+            } else {
+              _results1.push(void 0);
+            }
+          } else {
+            _results1.push(void 0);
           }
         }
-      }
+        return _results1;
+      })());
     }
-    if (bounds.length > 0) {
-      return map.fitBounds(bounds);
-    }
+    return _results;
   };
   branchesInitialized = $q.defer();
   /**
@@ -286,6 +358,6 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
         }
       }
     });
-    return $scope.updateFilter();
+    return $scope.updateBranchesVisible();
   });
 };

@@ -93,8 +93,29 @@ app.factory("map", function($log, mapquest) {
   map = L.map("map", {
     zoomControl: true
   });
-  map.latLngForAddress = mapquest.latLngForAddress;
   mapquest.tileLayer.addTo(map);
+  map.latLngForAddress = mapquest.latLngForAddress;
+  map.makeIcon = function(opts) {
+    var _ref, _ref1, _ref2, _ref3;
+
+    if (opts == null) {
+      opts = {};
+    }
+    if ((_ref = opts.color) == null) {
+      opts.color = 'blue';
+    }
+    if ((_ref1 = opts.icon) == null) {
+      opts.icon = null;
+    }
+    if ((_ref2 = opts.iconColor) == null) {
+      opts.iconColor = 'white';
+    }
+    if ((_ref3 = opts.spin) == null) {
+      opts.spin = false;
+    }
+    $log.info("Creating icon:", opts);
+    return new L.AwesomeMarkers.icon(opts);
+  };
   return map;
 });
 

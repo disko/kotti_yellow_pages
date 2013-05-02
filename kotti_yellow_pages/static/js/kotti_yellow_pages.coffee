@@ -69,7 +69,6 @@ app.factory "mapquest", ($log, $http) ->
 
       return promise
 
-
 ###*
  * map service
  * @param  {service} mapquest A service providing a tileLayer and
@@ -81,9 +80,19 @@ app.factory "mapquest", ($log, $http) ->
 app.factory "map", ($log, mapquest) ->
 
   $('#map').height($(window).height() - 40)
+
   map = L.map("map", zoomControl: true)
-  map.latLngForAddress = mapquest.latLngForAddress
   mapquest.tileLayer.addTo(map)
+
+  map.latLngForAddress = mapquest.latLngForAddress
+
+  map.makeIcon = (opts={}) ->
+    opts.color ?= 'blue'
+    opts.icon ?= null
+    opts.iconColor ?= 'white'
+    opts.spin ?= false
+    $log.info "Creating icon:", opts
+    return new L.AwesomeMarkers.icon(opts)
 
   return map
 

@@ -28,6 +28,11 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
       company.showDetails = (show, recurse=true) ->
         if show in [true, false]
           @_showDetails = show
+          if @marker
+            if show
+              @marker.setIcon(@marker.selectedIcon)
+            else
+              @marker.setIcon(@marker.defaultIcon)
         if show and recurse
           for c in $scope.companies
             if c != @
@@ -35,7 +40,9 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
         return @_showDetails
 
       company.onClick = (e) ->
+        $log.info "click"
         $scope.safeApply ->
+          e.target.setIcon(e.target.selectedIcon)
           map.panTo(e.target.company.latlng)
           e.target.company.showDetails(true)
           $scope.recalcDistances()
@@ -43,11 +50,30 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
       # create a marker object on the company if it contains the required
       # (non empty) lat / lng attributes
       if not company.marker and company.location.lat and company.location.lng
-        company.latlng = new L.LatLng(company.location.lat, company.location.lng)
-        company.marker = new L.marker(company.latlng, {title:company.title, riseOnHover:true})
-        company.marker.company = company
-        company.marker.on "click", company.onClick
 
+        company.latlng = new L.LatLng(company.location.lat, company.location.lng)
+
+        marker = new L.marker(company.latlng, title:company.title, riseOnHover:true, riseOffset: 1000)
+        marker.company = company
+
+        marker.defaultIcon = map.makeIcon(color:'darkblue', icon:'question-sign')
+        marker.hoverIcon = map.makeIcon(color:'blue', icon:'info-sign')
+        marker.selectedIcon = map.makeIcon(color:'red', icon:'star')
+        marker.setIcon(marker.defaultIcon)
+
+        marker.on "click", company.onClick
+
+        marker.on "mouseover", (e) ->
+          marker = e.target
+          if marker.options.icon not in [marker.selectedIcon, marker.hoverIcon]
+            marker.setIcon(marker.hoverIcon)
+
+        marker.on "mouseout", (e) ->
+          marker = e.target
+          if marker.options.icon not in [marker.selectedIcon, marker.defaultIcon]
+            marker.setIcon(marker.defaultIcon)
+
+        company.marker = marker
       ###*
        * Determine if the company shoul be visible in the application's current
        * state.
@@ -73,11 +99,35 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
           return @distance = null
         return @distance = Math.round(@latlng.distanceTo($scope.mapCenter) / 1000, 10)
 
-  $scope.distanceForCompany = (company) ->
+      ###*
+       * Determine the distance to the location provided by the user.
+       * @return {int} Distance in km
+      ###
+      company.distanceToUser = ->
+        if not (@latlng and $scope.user.latlng)
+          return @distance = null
+        return @distance = Math.round(@latlng.distanceTo($scope.user.latlng) / 1000, 10)
+
+  $scope.distanceToMapCenter = (company) ->
     if company.distanceToMapCenter
       return company.distanceToMapCenter()
     else
       return false
+
+  $scope.distanceToZipcode = (company) ->
+    if company.distanceToUser
+      return company.distanceToUser()
+    else
+      return false
+
+  $scope.companyName = (company) ->
+    return company.title
+
+  $scope.companyZipcode = (company) ->
+    return company.zipcode
+
+  $scope.companyListOrder = (company) ->
+    return $scope[$scope.listOrderBy](company)
 
   $scope.recalcDistances = ->
     (c.distanceToMapCenter() for c in companies when c.distanceToMapCenter)
@@ -110,22 +160,15 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
     map.bounds = new L.LatLngBounds((b.bounds for b in $scope.branches))
     map.fitBounds(map.bounds)
 
-  $scope.updateFilter = ->
-    $log.info "updateFilter"
-    bounds = []
+  $scope.updateBranchesVisible = ->
+    $log.info "updateBranchesVisible"
     for branch in $scope.branches
-      if branch.visible
-        bounds.push(branch.bounds)
       for company in branch.companies
         if company.marker
           if branch.visible and not map.hasLayer(company.marker)
             map.addLayer(company.marker)
           if not branch.visible and map.hasLayer(company.marker)
               map.removeLayer(company.marker)
-
-    if bounds.length > 0
-
-      map.fitBounds(bounds)
 
   branchesInitialized = $q.defer()
   ###*
@@ -170,5 +213,4 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
           latlng = location.latLng
           $scope.user.latlng = new L.LatLng(latlng.lat, latlng.lng)
 
-
-    $scope.updateFilter()
+    $scope.updateBranchesVisible()
