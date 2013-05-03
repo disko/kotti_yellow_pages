@@ -1,5 +1,11 @@
+###*
+ * Controller for the Yellow Pages main view.
+###
 PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
 
+  ###*
+   * safeApply - see: https://coderwall.com/p/ngisma
+  ###
   $scope.safeApply = (fn) ->
     phase = this.$root.$$phase
     if(phase == '$apply' or phase == '$digest')
@@ -13,8 +19,6 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
   ###
   initCompanies = ->
 
-    $log.info "initCompanies"
-
     for company in $scope.companies
 
       # make company.branches an array of actual branch objects
@@ -25,6 +29,13 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
       for branch in company.branches
         branch.companies.push(company)
 
+      ###*
+       * Get or set wether the company details should be visible.
+       * @param  {bool} show         if given: set the visible state, else: get
+       * @param  {bool} recurse=true if true and show is also true: set all other
+       *                             compnies' detail visible state to false.
+       * @return {bool}              the visible state
+      ###
       company.showDetails = (show, recurse=true) ->
         if show in [true, false]
           @_showDetails = show
@@ -39,13 +50,15 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
               c.showDetails(false, false)
         return @_showDetails
 
+      ###*
+       * Handler for the company's marker's click result.
+       * @param  {L.MouseEvent} e The event that triggered the handler
+      ###
       company.onClick = (e) ->
         $log.info "click"
         $scope.safeApply ->
           e.target.setIcon(e.target.selectedIcon)
-          map.panTo(e.target.company.latlng)
           e.target.company.showDetails(true)
-          $scope.recalcDistances()
 
       # create a marker object on the company if it contains the required
       # (non empty) lat / lng attributes
@@ -74,6 +87,7 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
             marker.setIcon(marker.defaultIcon)
 
         company.marker = marker
+
       ###*
        * Determine if the company shoul be visible in the application's current
        * state.
@@ -192,6 +206,22 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
     $window.companies = companies
     companiesInitialized.resolve()
 
+  $scope.latLngForUser = ->
+    # only handles German zipcodes correctly atm
+    if not $scope.user or $scope.user.zipcode.length != 5
+      return false
+    map.latLngForAddress($scope.user).then (response) ->
+      if response.length > 0
+        locations = response[0].locations
+        if locations.length > 0
+          location = response[0].locations[0]
+          latlng = location.latLng
+          $scope.user.latlng = new L.LatLng(latlng.lat, latlng.lng)
+          if $scope.listOrderBy = 'distanceToZipcode'
+            map.panTo($scope.user.latlng)
+
+  $scope.$watch 'user', $scope.latLngForUser, true
+
   ###*
    * Wait for the branchesInitialized and companiesInitialized promises to be
    * resolved, then initialize the application.
@@ -205,14 +235,9 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
 
     $scope.listOrderBy = 'distanceToMapCenter'
     $window.user = $scope.user =
-      zipcode: 47877
+      zipcode: ''
       country: 'DE'
-    map.latLngForAddress($scope.user).then (response) ->
-      if response.length > 0
-        locations = response[0].locations
-        if locations.length > 0
-          location = response[0].locations[0]
-          latlng = location.latLng
-          $scope.user.latlng = new L.LatLng(latlng.lat, latlng.lng)
+
+    $scope.latLngForUser()
 
     $scope.updateBranchesVisible()
