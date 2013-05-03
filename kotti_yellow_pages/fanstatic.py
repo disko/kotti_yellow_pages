@@ -11,6 +11,7 @@ from fanstatic import Group
 from fanstatic import Library
 from fanstatic import Resource
 from js.jquery import jquery
+from js.spin import jquery_spin
 
 library = Library('kotti_yellow_pages', 'static')
 
@@ -24,6 +25,12 @@ angular = Resource(
     'js/angular.js',
     minified='js/angular.min.js',
     depends=[jquery, ])
+
+angular_resource = Resource(
+    library,
+    'js/angular-resource.js',
+    minified='js/angular-resource.min.js',
+    depends=[angular, ])
 
 angular_ui_css = Resource(
     library,
@@ -68,7 +75,13 @@ kotti_yellow_pages = Resource(
     library,
     'js/kotti_yellow_pages.js',
     minified='js/kotti_yellow_pages.min.js',
-    depends=[jquery, angular, angular_ui, leaflet, leaflet_awesome_markers]
+    depends=[
+        jquery,
+        angular,
+        angular_ui,
+        leaflet,
+        leaflet_awesome_markers,
+    ]
 )
 
 pages_js = Resource(
@@ -87,7 +100,7 @@ company_edit_js = Resource(
     library,
     'js/company_edit.js',
     minified='js/company_edit.min.js',
-    depends=[kotti_yellow_pages, angular_bootstrap, ]
+    depends=[kotti_yellow_pages, angular_bootstrap, jquery_spin, ]
 )
 
 css = Resource(

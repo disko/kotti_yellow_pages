@@ -45,22 +45,29 @@ app.factory("mapquest", function($log, $http) {
     */
 
     latLngForAddress: function(address) {
-      var base_url, city, country, params, promise, street, zipcode;
+      var addressString, base_url, city, country, location, params, promise, street, zipcode;
 
       $log.info("Requesting geolocation from MapQuest API endpoint...");
-      base_url = "http://open.mapquestapi.com/geocoding/v1/address?key=" + mapquest.key;
       street = address.street ? "" + address.street : "";
       zipcode = address.zipcode ? "" + address.zipcode : "";
       city = address.city ? "" + address.city : "";
       country = address.country ? "" + address.country : "";
-      address = "" + street + ", " + zipcode + " " + city + ", " + country;
+      addressString = "" + street + ", " + zipcode + " " + city + ", " + country;
       $log.info("Constructed addresss: " + address);
-      params = {
-        inFormat: "kvp",
-        outFormat: "json",
-        callback: "JSON_CALLBACK",
-        location: address
+      location = {
+        city: address.city,
+        country: address.country,
+        postalCode: address.zipcode,
+        street: address.street
       };
+      params = {
+        inFormat: "json",
+        outFormat: "json",
+        callback: "JSON_CALLBACK"
+      };
+      base_url = "http://open.mapquestapi.com/geocoding/v1/address?key=" + mapquest.key + "&json=" + (angular.toJson({
+        location: location
+      }));
       $log.info(params);
       promise = $http.jsonp(base_url, {
         params: params
@@ -95,6 +102,12 @@ app.factory("map", function($log, mapquest) {
   });
   mapquest.tileLayer.addTo(map);
   map.latLngForAddress = mapquest.latLngForAddress;
+  /**
+   * Create and return a marker icon.
+   * @param  {object} opts={} Object with non default icon properties.
+   * @return {L.Icon}         Marker icon
+  */
+
   map.makeIcon = function(opts) {
     var _ref, _ref1, _ref2, _ref3;
 
@@ -113,7 +126,6 @@ app.factory("map", function($log, mapquest) {
     if ((_ref3 = opts.spin) == null) {
       opts.spin = false;
     }
-    $log.info("Creating icon:", opts);
     return new L.AwesomeMarkers.icon(opts);
   };
   return map;

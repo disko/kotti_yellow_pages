@@ -46,6 +46,7 @@ setup(
     install_requires=[
         'Kotti >= 0.9a2dev',
         'js.jquery',
+        'js.spin',
         'phonenumbers',
         'pycountry',
         'zope.interface',

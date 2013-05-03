@@ -205,6 +205,9 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
     return company.zipcode;
   };
   $scope.companyListOrder = function(company) {
+    if (!$scope.listOrderBy) {
+      $scope.listOrderBy = 'companyZipcode';
+    }
     return $scope[$scope.listOrderBy](company);
   };
   $scope.recalcDistances = function() {

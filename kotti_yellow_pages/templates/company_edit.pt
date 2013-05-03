@@ -24,6 +24,13 @@
                    ng-model="company.title" />
           </div>
 
+          <div control-group="contact_person" title="Contact person"
+               required="false"
+               i18n:attributes="title">
+            <input type="text" name="contact_person"
+                   ng-model="company.contact_person" />
+          </div>
+
           <div class="control-group">
             <label class="control-label">
               <span i18n:translate="">Branches</span>
@@ -45,8 +52,11 @@
               <span i18n:translate="">Address</span>
               <i class="icon-ok" ng-show="addressSubform.$valid"></i>
             </legend>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sit, deleniti aliquam eum maxime nihil dolorum.
+            <p i18n:translate="">
+              Please provide yor company's exact address and click on
+              "Update marker position from address" to set the marker on the
+              map. You can skip this step if the marker is already positioned
+              accurately.
             </p>
             <div control-group="street" title="Street"
                  required="true" i18n:attributes="title">
@@ -81,11 +91,44 @@
 
             <!-- TODO: make the toggle animated.
                        https://github.com/angular-ui/bootstrap/tree/master/src/collapse -->
-            <div class="form-actions" ng-show="addressSubform.$valid" collapse="isCollapsed">
-              <a class="btn" i18n:translate=""
-                      ng-click="locateAddress()">
+            <div class="form-actions"
+                 ng-show="addressSubform.$valid"
+                 collapse="isCollapsed">
+              <a class="btn" i18n:translate="" ng-click="locateAddress()">
                 Update marker position from address
               </a>
+            </div>
+            <div class="form-actions spinner" ng-show="search.status=='inProgress'">
+              Searching...
+            </div>
+            <div class="form-actions" ng-show="search.status=='noResult'">
+              <p i18n:translate="">
+                The search returned no results. Please check the address for
+                errors and search again after you've corrected them or place
+                the marker yourself.
+              </p>
+              <p ng-show="browserSupportsGeolocation">
+                <a href="" ng-click="invokeNavigatorGeoLocation()">
+                  You can also try to use your browser's geolocation feature.
+                </a>
+              </p>
+            </div>
+            <div class="form-actions" ng-show="search.status=='singleResult'">
+              The marker has been positioned to the location provided by the
+              search result. You might want want to refine its position by
+              dragging it to the exact location.
+            </div>
+            <div class="form-actions" ng-show="search.status=='multipleResults'">
+              <p i18n:translate="">
+                The search returned multiple results. Please select the most
+                accurate by clicking on it and optionally drag the map marker
+                to the exact location of the address you specified above.
+              </p>
+              <p ng-repeat="result in search.results">
+                <a href="" ng-click="selectSearchResult(result)">
+                  <img src="{{result.mapUrl}}" alt=""/>
+                </a>
+              </p>
             </div>
           </fieldset>
 

@@ -165,7 +165,7 @@ class YPCompany(Content):
 
     _telephone = Column('telephone', Unicode, nullable=False)
     _facsimile = Column('facsimile', Unicode, nullable=True)
-    url = Column(Unicode, nullable=True)
+    _url = Column('url', Unicode, nullable=True)
     email = Column(Unicode, nullable=True)
 
     contact_person = Column(Unicode, nullable=True)
@@ -188,6 +188,19 @@ class YPCompany(Content):
     @facsimile.setter
     def facsimile_setter(self, facsimile):
         self._facsimile = format_phone(facsimile, self.country)
+
+    @hybrid_property
+    def url(self):
+        return self._url
+
+    @url.setter
+    def url_setter(self, url):
+        if url:
+            if not url.startswith(('http://', 'https://', )):
+                url = 'http://' + url
+            if not url.endswith('/'):
+                url = url + '/'
+        self._url = url
 
     _branches = relationship(
         YPCompanyToBranch,
@@ -266,6 +279,7 @@ class YPCompany(Content):
             'id': get('id'),
             'title': get('title'),
             'branches': branches,
+            'contact_person': get('contact_person'),
             'telephone': get('telephone'),
             'tel_url': get('telephone'),
             'facsimile': get('facsimile'),

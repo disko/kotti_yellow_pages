@@ -12,39 +12,73 @@ var CompanyEditCtrl;
 CompanyEditCtrl = function($scope, $http, $log, map) {
   var handleLocationChange;
 
+  $('.spinner').spin({});
   $scope.location = new L.LatLng(0, 0);
   $scope.map = map;
   $scope.map.setView($scope.location, 6);
   $scope.marker = L.marker($scope.location, {
     draggable: true
   }).addTo($scope.map);
+  $scope.search = {
+    status: 'notAllowed'
+  };
+  $scope.browserSupportsGeolocation = navigator.geolocation;
+  $scope.invokeNavigatorGeoLocation = function() {
+    if (navigator.geolocation) {
+      return navigator.geolocation.getCurrentPosition(function(position) {
+        $scope.company.location.lat = position.coords.latitude;
+        $scope.company.location.lng = position.coords.longitude;
+        return $scope.setMarkerFromLocation();
+      });
+    }
+  };
+  $scope.selectSearchResult = function(location) {
+    var latlng;
+
+    latlng = location.latLng;
+    latlng = new L.LatLng(latlng.lat, latlng.lng);
+    $scope.company.location.lat = latlng.lat;
+    $scope.company.location.lng = latlng.lng;
+    $scope.setMarkerFromLocation();
+    return $scope.search.status = 'singleResult';
+  };
   /**
    * Pass the address from the scope to the latLngForAddress service method and
    * update location if a geolocation is returned by the API endpoint.
   */
 
   $scope.locateAddress = function() {
-    $log.info("Updating location from scope.address...");
     if (!$scope.addressSubform.$valid) {
       return false;
     }
+    $log.info("Updating location from scope.address...");
+    $scope.search.results = [];
+    $scope.search.status = 'inProgress';
+    $scope.communicationSubform.$setPristine();
     map.latLngForAddress($scope.company.address).then(function(results) {
-      var latlng, locations;
+      var locations;
 
+      $scope.searchInProgress = false;
       if (results.length !== 1) {
         $log.warn("response.data contains " + results.length + " results.");
+        $scope.search.status = 'noResult';
         return false;
       }
       locations = results[0].locations;
-      if (locations.length < 1) {
-        $log.warn("results[0] contains " + locations.length + " locations.");
-        return false;
+      switch (locations.length) {
+        case 0:
+          $log.warn("results[0] contains " + locations.length + " locations.");
+          $scope.search.status = 'noResult';
+          return false;
+        case 1:
+          $scope.search.status = 'singleResult';
+          $scope.selectSearchResult(locations[0]);
+          return true;
+        default:
+          $scope.search.status = 'multipleResults';
+          $scope.search.results = locations;
+          return false;
       }
-      latlng = locations[0].latLng;
-      latlng = new L.LatLng(latlng.lat, latlng.lng);
-      $scope.company.location.lat = latlng.lat;
-      $scope.company.location.lng = latlng.lng;
-      return $scope.setMarkerFromLocation();
     });
     return false;
   };
@@ -58,7 +92,7 @@ CompanyEditCtrl = function($scope, $http, $log, map) {
     $scope.marker.setLatLng($scope.company.location);
     $scope.map.panTo($scope.company.location);
     $scope.map.setZoom(14);
-    return false;
+    return true;
   };
   $scope.marker.on("dragend", function(e) {
     return $scope.$apply(function() {

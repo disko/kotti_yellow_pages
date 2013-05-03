@@ -8,6 +8,9 @@
 
 CompanyEditCtrl = ($scope, $http, $log, map) ->
 
+  # setup the spinner
+  $('.spinner').spin({})
+
   # default location
   $scope.location = new L.LatLng(0, 0)
 
@@ -18,43 +21,70 @@ CompanyEditCtrl = ($scope, $http, $log, map) ->
   # create a single marker
   $scope.marker = L.marker($scope.location, draggable: true ).addTo($scope.map)
 
+  $scope.search =
+    status: 'notAllowed' # allowed, inProgress, noResult, singleResult, multipleResults
+
+  $scope.browserSupportsGeolocation = navigator.geolocation
+
+  $scope.invokeNavigatorGeoLocation = ->
+    if navigator.geolocation
+      navigator.geolocation.getCurrentPosition (position) ->
+        $scope.company.location.lat = position.coords.latitude
+        $scope.company.location.lng = position.coords.longitude
+        $scope.setMarkerFromLocation()
+
+  $scope.selectSearchResult = (location) ->
+    latlng = location.latLng
+    latlng = new L.LatLng(latlng.lat, latlng.lng)
+
+    $scope.company.location.lat = latlng.lat
+    $scope.company.location.lng = latlng.lng
+    $scope.setMarkerFromLocation()
+
+    $scope.search.status = 'singleResult'
+
   ###*
    * Pass the address from the scope to the latLngForAddress service method and
    * update location if a geolocation is returned by the API endpoint.
   ###
   $scope.locateAddress = ->
 
-    $log.info("Updating location from scope.address...")
-
     if not $scope.addressSubform.$valid
       return false
+
+    $log.info("Updating location from scope.address...")
+    $scope.search.results = []
+    $scope.search.status = 'inProgress'
+    $scope.communicationSubform.$setPristine()
 
     # call the addressService
     map.latLngForAddress($scope.company.address).then (results) ->
 
+      $scope.searchInProgress = false
+
       if results.length != 1
         $log.warn("response.data contains #{results.length} results.")
+        $scope.search.status = 'noResult'
         return false
 
       locations = results[0].locations
 
-      if locations.length < 1
-        # TODO:   Display a meaninful status message to the user and let them
-        #         chose wether to alter the address and start searching again
-        #         or issue the search without street and thus obtain a rather
-        #         inaccurate result (probably multiple results, see below)
-        $log.warn("results[0] contains #{locations.length} locations.")
-        return false
-
-      # TODO: Some queries have multiple locations in their result.
-      #       The user should be able to chose among them instead of us blindly
-      #       chosing the first.
-      latlng = locations[0].latLng
-      latlng = new L.LatLng(latlng.lat, latlng.lng)
-
-      $scope.company.location.lat = latlng.lat
-      $scope.company.location.lng = latlng.lng
-      $scope.setMarkerFromLocation()
+      switch locations.length
+        when 0
+          $log.warn("results[0] contains #{locations.length} locations.")
+          $scope.search.status = 'noResult'
+          # TODO:   call the address service again without the street part of
+          #         the address (maybe even without a housenumber (or its
+          #         appendix (a/b/c)) first).
+          return false
+        when 1
+          $scope.search.status = 'singleResult'
+          $scope.selectSearchResult(locations[0])
+          return true
+        else
+          $scope.search.status = 'multipleResults'
+          $scope.search.results = locations
+          return false
 
     return false
 
@@ -70,7 +100,7 @@ CompanyEditCtrl = ($scope, $http, $log, map) ->
     $scope.map.panTo $scope.company.location
     $scope.map.setZoom 14
 
-    false
+    true
 
   # Handle the marker's dragend event.
   $scope.marker.on "dragend", (e) ->

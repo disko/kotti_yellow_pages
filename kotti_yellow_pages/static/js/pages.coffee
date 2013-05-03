@@ -127,6 +127,8 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
     return company.zipcode
 
   $scope.companyListOrder = (company) ->
+    if not $scope.listOrderBy
+      $scope.listOrderBy = 'companyZipcode'
     return $scope[$scope.listOrderBy](company)
 
   $scope.recalcDistances = ->

@@ -41,19 +41,30 @@ app.factory "mapquest", ($log, $http) ->
 
       $log.info("Requesting geolocation from MapQuest API endpoint...")
 
-      base_url = "http://open.mapquestapi.com/geocoding/v1/address?key=#{mapquest.key}"
       street = if address.street then "#{address.street}" else ""
       zipcode = if address.zipcode then "#{address.zipcode}" else ""
       city = if address.city then "#{address.city}" else ""
       country = if address.country then "#{address.country}" else ""
-      address = "#{street}, #{zipcode} #{city}, #{country}"
+      addressString = "#{street}, #{zipcode} #{city}, #{country}"
       $log.info("Constructed addresss: #{address}")
+
+      location =
+        city: address.city
+        country: address.country
+        postalCode: address.zipcode
+        street: address.street
+
       params =
-        inFormat: "kvp"
+        inFormat: "json"
         outFormat: "json"
         callback: "JSON_CALLBACK"
-        location: address
+        # location: addressString
+        #json: )
 
+      # key and json are part of the base_url (and not in the params object)
+      # because angular urlencodes everything provided in params object which
+      # doesn't work with the mapquest API.
+      base_url = "http://open.mapquestapi.com/geocoding/v1/address?key=#{mapquest.key}&json=#{angular.toJson({location:location})}"
       $log.info(params)
 
       promise = $http.jsonp(base_url, {params:params})
@@ -86,12 +97,18 @@ app.factory "map", ($log, mapquest) ->
 
   map.latLngForAddress = mapquest.latLngForAddress
 
+  ###*
+   * Create and return a marker icon.
+   * @param  {object} opts={} Object with non default icon properties.
+   * @return {L.Icon}         Marker icon
+  ###
   map.makeIcon = (opts={}) ->
+
     opts.color ?= 'blue'
     opts.icon ?= null
     opts.iconColor ?= 'white'
     opts.spin ?= false
-    $log.info "Creating icon:", opts
+
     return new L.AwesomeMarkers.icon(opts)
 
   return map
