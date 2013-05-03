@@ -49,6 +49,7 @@ setup(
         'js.spin',
         'phonenumbers',
         'pycountry',
+        'pyramid_marrowmailer',
         'zope.interface',
     ],
     entry_points={

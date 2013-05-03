@@ -119,6 +119,10 @@ class Add(AddFormView, YPCompanyForm):
     schema_factory = Schema
     add = YPCompany
     item_type = _(u"Company")
+    success_message = _(
+        u"Your company has been submitted, but won't be visible until it has "
+        u"been approved by an editor. If you provided an email address, you "
+        u"will be notified upon publishing.")
 
     def __init__(self, context, request, **kwargs):
 
@@ -128,13 +132,15 @@ class Add(AddFormView, YPCompanyForm):
 
     @property
     def success_url(self):
-        """ Redirect to the parent on success (i.e. the YellowPages instance)
+        """
+        Redirect to the current context on success (i.e. the YellowPages
+        instance)
 
-        :result: parent's URL.
+        :result: YellowPages' URL.
         :rtype: str
         """
 
-        return self.request.resource_url(self.context.parent)
+        return self.request.resource_url(self.context)
 
     @property
     def _default_json(self):

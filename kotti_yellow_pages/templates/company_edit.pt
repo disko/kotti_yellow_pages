@@ -17,35 +17,41 @@
 
           <input type="hidden" name="csrf_token" value="${request.session._csrft_}" />
 
-          <div control-group="title" title="Company name"
-               required="true"
-               i18n:attributes="title">
-            <input type="text" name="title" required="required"
-                   ng-model="company.title" />
-          </div>
-
-          <div control-group="contact_person" title="Contact person"
-               required="false"
-               i18n:attributes="title">
-            <input type="text" name="contact_person"
-                   ng-model="company.contact_person" />
-          </div>
-
-          <div class="control-group">
-            <label class="control-label">
-              <span i18n:translate="">Branches</span>
-              <span class="req">*</span>
-            </label>
-            <div class="controls">
-              <input type="hidden" name="__start__" value="branches:sequence"/>
-              <label class="checkbox" ng-repeat="branch in company.branches">
-                <input type="checkbox" name="branches" value="{{branch.title}}"
-                       ng-model="company.branches[$index].selected" />
-                {{branch.title}}
-              </label>
-              <input type="hidden" name="__end__" value="branches:sequence"/>
+          <fieldset ng-form="companySubform">
+            <legend>
+              <span i18n:translate="">Company, Contact, Branches</span>
+              <i class="icon-ok" ng-show="companySubform.$valid"></i>
+            </legend>
+            <div control-group="title" title="Company name"
+                 required="true"
+                 i18n:attributes="title">
+              <input type="text" name="title" required="required"
+                     ng-model="company.title" />
             </div>
-          </div>
+
+            <div control-group="contact_person" title="Contact person"
+                 required="false"
+                 i18n:attributes="title">
+              <input type="text" name="contact_person"
+                     ng-model="company.contact_person" />
+            </div>
+
+            <div class="control-group">
+              <label class="control-label">
+                <span i18n:translate="">Branches</span>
+                <span class="req">*</span>
+              </label>
+              <div class="controls">
+                <input type="hidden" name="__start__" value="branches:sequence"/>
+                <label class="checkbox" ng-repeat="branch in company.branches">
+                  <input type="checkbox" name="branches" value="{{branch.title}}"
+                         ng-model="company.branches[$index].selected" />
+                  {{branch.title}}
+                </label>
+                <input type="hidden" name="__end__" value="branches:sequence"/>
+              </div>
+            </div>
+          </fieldset>
 
           <fieldset ng-form="addressSubform">
             <legend>

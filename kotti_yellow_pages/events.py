@@ -9,10 +9,13 @@ from logging import getLogger
 
 from kotti.events import ObjectInsert
 from kotti.events import subscribe
+from kotti.security import get_principals
 from kotti.security import has_permission
+from kotti.security import map_principals_with_local_roles
 from kotti.workflow import WorkflowTransition
 from kotti.workflow import get_workflow
-from pyramid.httpexceptions import HTTPTemporaryRedirect
+from pyramid.security import principals_allowed_by_permission
+from pyramid.threadlocal import get_current_request
 
 from kotti_yellow_pages import _
 from kotti_yellow_pages.resources import YPCompany
@@ -26,36 +29,69 @@ def on_company_insert(event):
 
     log.info("YPCompany insert")
 
-    # context = event.object
-    # request = event.request
+    wf = get_workflow(event.object)
 
-    # wf = get_workflow(context)
-    # transitions = wf.get_transitions(context, request)
-    # to_states = [t['to_state'] for t in transitions]
+    if has_permission('state_change', event.object, event.request):
+        wf.transition(event.object, event.request, 'created_to_published')
+    elif has_permission('submit', event.object, event.request):
+        wf.transition(event.object, event.request, 'created_to_pending')
+    else:
+        log.warn("Company created, but no transition allowed for current user.")
 
-    # if 'private' in to_states:
-    #     wf.transition_to_state(context, request, 'private')
-    # elif 'pending' in to_states:
-    #     wf.transition_to_state(context, request, 'pending')
 
-    # #import pdb; pdb.set_trace()
-    # if not has_permission('view', context, request):
-    #     request.session.flash(
-    #         _(u'You will be notified on approval or rejection of your entry.'),
-    #         'info')
-    #     raise HTTPTemporaryRedirect(request.resource_url(context.parent))
-    # #import pdb; pdb.set_trace()
+def get_recepients(context, permission="state_change"):
+    """
+    Get a list of principals that have the permission in context and a email.
+
+    :param context: Object for that the permission is needed.
+    :type context: :class:`kotti.resources.Node`
+
+    :param permission:
+    :type permission: str
+
+    :result: List of principals.
+    :rtype: set
+    """
+
+    principal_db = get_principals()
+
+    recepients = []
+    for p in principals_allowed_by_permission(context, permission):
+        # set(['role:owner', 'role:editor'])
+        for principal in principal_db.search(groups=u'*%s*' % p).all():
+            recepients.append(principal)
+        for principal in map_principals_with_local_roles(context):
+            # [
+            #   (
+            #       <Principal u'disko'>,
+            #       (
+            #           [u'role:owner', u'group:admins', u'role:admin'],
+            #           [u'role:owner', u'group:admins', u'role:admin']))]
+            if p in principal[1][0] or p in principal[1][1]:
+                recepients.append(principal[0])
+
+    return set([r for r in recepients if r.email])
 
 
 @subscribe(WorkflowTransition, YPCompany)
 def on_company_transition(event):
-    log.info("YPCompany transition")
-    # print event.object
-    # print event.request
 
     # wf = event.info.workflow
-    # _from = event.info.transition['from_state']
-    # _to = event.info.transition['to_state']
+    context = event.object
+    request = get_current_request()
 
-    # log.info('Transition of %s from %s to %s' % (event.object, _from, _to))
-    # #import pdb; pdb.set_trace()
+    _from = event.info.transition['from_state']
+    _to = event.info.transition['to_state']
+
+    log.info("YPCompany transition (%s -> %s)" % (_from, _to))
+
+    if _to == 'pending':
+        # send email
+
+        recepients = get_recepients(context)
+        mailer = request.mailer
+        message = mailer.new()
+        message.to = ['%s <%s>' % (r.title, r.email) for r in recepients]
+        message.subject = _(u'New company submitted and waiting for approval')
+        message.plain = request.resource_url(context)
+        message.send()

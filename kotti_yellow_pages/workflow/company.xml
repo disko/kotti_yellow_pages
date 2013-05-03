@@ -1,10 +1,12 @@
 <configure xmlns="http://namespaces.repoze.org/bfg"
   xmlns:i18n="http://xml.zope.org/namespaces/i18n"
   i18n:domain="kotti_yellow_pages">
+
   <workflow name="yp_company" type="security" state_attr="state"
     initial_state="created"
     content_types="kotti_yellow_pages.interfaces.IYPCompanyWorkflow"
     permission_checker="pyramid.security.has_permission">
+
     <state name="created"
       callback="kotti.workflow.workflow_callback">
       <key name="title" value="_(u'Created')" />
@@ -15,6 +17,7 @@
       <key name="role:editor" value="view add edit state_change" />
       <key name="role:owner" value="view add edit manage state_change" />
     </state>
+
     <state name="pending"
       callback="kotti.workflow.workflow_callback">
       <key name="title" value="_(u'Waiting for approval')" />
@@ -25,6 +28,7 @@
       <key name="role:editor" value="view add edit state_change" />
       <key name="role:owner" value="view add edit manage state_change" />
     </state>
+
     <state name="private"
       callback="kotti.workflow.workflow_callback">
       <key name="title" value="_(u'Private')" />
@@ -35,6 +39,7 @@
       <key name="role:editor" value="view add edit state_change" />
       <key name="role:owner" value="view add edit manage state_change" />
     </state>
+
     <state name="public"
       callback="kotti.workflow.workflow_callback">
       <key name="title" value="_(u'Public')" />
@@ -45,14 +50,37 @@
       <key name="role:editor" value="view add edit state_change" />
       <key name="role:owner" value="view add edit manage state_change" />
     </state>
-    <transition name="created_to_pending" permission="submit"
-      from_state="created" to_state="pending" />
-    <transition name="created_to_private" permission="state_change"
-      from_state="created" to_state="private" />
-    <transition name="created_to_public" permission="state_change"
-      from_state="created" to_state="public" />
-    <transition name="private_to_public" permission="state_change"
-      from_state="private" to_state="public" />
+
+    <transition
+      name="created_to_pending"
+      permission="submit"
+      from_state="created"
+      to_state="pending" />
+
+    <transition
+      name="created_to_public"
+      permission="state_change"
+      from_state="created"
+      to_state="public" />
+
+    <transition
+      name="pending_to_public"
+      permission="state_change"
+      from_state="pending"
+      to_state="public" />
+
+    <transition
+      name="private_to_public"
+      permission="state_change"
+      from_state="private"
+      to_state="public" />
+
+    <transition
+      name="public_to_private"
+      permission="state_change"
+      from_state="public"
+      to_state="private" />
 
   </workflow>
+
 </configure>
