@@ -95,3 +95,12 @@ def on_company_transition(event):
         message.subject = _(u'New company submitted and waiting for approval')
         message.plain = request.resource_url(context)
         message.send()
+
+    elif (_from == 'pending') and (_to == 'public'):
+        if context.email:
+            mailer = request.mailer
+            message = mailer.new()
+            message.to = '%s <%s>' % (context.title, context.email)
+            message.subject = _(u'Your company is now listed')
+            message.plain = request.resource_url(context.parent)
+            message.send()

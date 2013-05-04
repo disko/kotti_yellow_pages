@@ -3,6 +3,7 @@
       xmlns:tal="http://xml.zope.org/namespaces/tal"
       xmlns:metal="http://xml.zope.org/namespaces/metal"
       xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="kotti_yellow_pages"
       metal:use-macro="api.macro('kotti:templates/edit/master.pt')">
 
   <div metal:fill-slot="content" class="yp-company edit ng-cloak"
@@ -59,10 +60,7 @@
               <i class="icon-ok" ng-show="addressSubform.$valid"></i>
             </legend>
             <p i18n:translate="">
-              Please provide yor company's exact address and click on
-              "Update marker position from address" to set the marker on the
-              map. You can skip this step if the marker is already positioned
-              accurately.
+              Please provide yor company's exact address and click on "Update marker position from address" to set the marker on the map. You can skip this step if the marker is already positioned accurately.
             </p>
             <div control-group="street" title="Street"
                  required="true" i18n:attributes="title">
@@ -109,9 +107,7 @@
             </div>
             <div class="form-actions" ng-show="search.status=='noResult'">
               <p i18n:translate="">
-                The search returned no results. Please check the address for
-                errors and search again after you've corrected them or place
-                the marker yourself.
+                The search returned no results. Please check the address for errors and search again after you've corrected them or place the marker yourself.
               </p>
               <p ng-show="browserSupportsGeolocation">
                 <a href="" ng-click="invokeNavigatorGeoLocation()">
@@ -120,15 +116,11 @@
               </p>
             </div>
             <div class="form-actions" ng-show="search.status=='singleResult'">
-              The marker has been positioned to the location provided by the
-              search result. You might want want to refine its position by
-              dragging it to the exact location.
+              The marker has been positioned to the location provided by the search result. You might want want to refine its position by dragging it to the exact location.
             </div>
             <div class="form-actions" ng-show="search.status=='multipleResults'">
               <p i18n:translate="">
-                The search returned multiple results. Please select the most
-                accurate by clicking on it and optionally drag the map marker
-                to the exact location of the address you specified above.
+                The search returned multiple results. Please select the most accurate by clicking on it and optionally drag the map marker to the exact location of the address you specified above.
               </p>
               <p ng-repeat="result in search.results">
                 <a href="" ng-click="selectSearchResult(result)">
