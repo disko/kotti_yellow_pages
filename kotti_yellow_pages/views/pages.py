@@ -7,6 +7,7 @@ Created on 2013-04-13
 
 import json
 
+from kotti.views.edit.actions import contents
 from kotti.views.edit.content import ContentSchema
 from kotti.views.form import AddFormView
 from kotti.views.form import EditFormView
@@ -69,3 +70,23 @@ class YellowPagesView(BaseView):
             'branches_json': json.dumps(branches),
             'companies_json': json.dumps(companies),
         }
+
+    @view_config(name='branches', permission='edit',
+                 renderer='kotti:templates/edit/contents.pt')
+    def branches(self):
+
+        result = contents(self.context, self.request)
+        result['children'] = [c for c in result['children']
+                              if c.type == 'yp_branch']
+
+        return result
+
+    @view_config(name='companies', permission='edit',
+                 renderer='kotti:templates/edit/contents.pt')
+    def companies(self):
+
+        result = contents(self.context, self.request)
+        result['children'] = [c for c in result['children']
+                              if c.type == 'yp_company']
+
+        return result

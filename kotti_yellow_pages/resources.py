@@ -8,6 +8,7 @@ Created on 2013-04-12
 from kotti import Base
 from kotti import DBSession
 from kotti.resources import Content
+from kotti.util import ViewLink
 from phonenumbers import parse
 from phonenumbers import format_number
 from phonenumbers import PhoneNumberFormat
@@ -55,6 +56,12 @@ class YellowPages(Content):
         title=_(u'Yellow Pages'),
         add_view=u'add_yellowpages',
         addable_to=['Document', ],
+        edit_links=[
+            # ViewLink('edit', title=_(u'Edit')),
+            ViewLink('branches', title=_(u'Branches')),
+            ViewLink('companies', title=_(u'Companies')),
+            ViewLink('share', title=_(u'Share')),
+        ],
     )
 
     def branches_with_permission(self, request, permission='view'):
@@ -102,6 +109,10 @@ class YPBranch(Content):
         title=_(u'Yellow Pages Branch'),
         add_view=u'add_yp_branch',
         addable_to=['YellowPages', ],
+        edit_links=[
+            ViewLink('edit', title=_(u'Edit')),
+            ViewLink('share', title=_(u'Share')),
+        ],
     )
 
     def __json__(self, request):
@@ -218,6 +229,10 @@ class YPCompany(Content):
         title=_(u'Yellow Pages Company'),
         add_view=u'add_yp_company',
         addable_to=['YellowPages', ],
+        edit_links=[
+            ViewLink('edit', title=_(u'Edit')),
+            ViewLink('share', title=_(u'Share')),
+        ],
     )
 
     def __init__(self, street=None, zipcode=None, city=None, country=None,
