@@ -18,7 +18,38 @@ you setup Fanstatic) section could then look like this::
 
     kotti.configurators = kotti_yellow_pages.kotti_configure
 
-https://github.com/leaflet-extras/leaflet.css
-http://tombatossals.github.io/angular-leaflet-directive/
+Included Javascript Libraries
+-----------------------------
+
+``kotti_yellow_pages`` makes heavy use of third party Javascript libraries.
+
+These libraries are bundled with this package:
+
+    -   AngularJS
+        (http://angularjs.org/)
+
+        The reason why AngularJS is bundled instead of using the existing
+        ``js.angular`` fanstatic package is, that we have to make sure that
+        AngularJS uses jQuery and not its included ``jQuery lite``.  Therefore
+        the Fanstatic resource has to declare a dependency on
+        ``js.jquery.jquery``, which ``js.angular`` doesn't provide (and is right
+        with not doing so).
+
+    -   AngularUI
+        (http://angular-ui.github.io/)
+
+        Same reason as above.
+
+    -   UI Bootstrap
+        (http://angular-ui.github.io/bootstrap/)
+
+        Same reason as above.
+
+    -   Leaflet awesome markers
+        (https://github.com/lvoogdt/Leaflet.awesome-markers)
+
+        Should be in its own ``js.leaflet_awesome_markers`` package instead, or
+        probably part of ``js.leaflet``.
+
 
 .. _Kotti: http://pypi.python.org/pypi/Kotti

@@ -11,6 +11,7 @@ from fanstatic import Group
 from fanstatic import Library
 from fanstatic import Resource
 from js.jquery import jquery
+from js.leaflet import leaflet
 from js.spin import jquery_spin
 
 library = Library('kotti_yellow_pages', 'static')
@@ -22,50 +23,38 @@ library = Library('kotti_yellow_pages', 'static')
 
 angular = Resource(
     library,
-    'js/angular.js',
-    minified='js/angular.min.js',
+    'vendor/js/angular.js',
+    minified='vendor/js/angular.min.js',
     depends=[jquery, ])
-
-angular_resource = Resource(
-    library,
-    'js/angular-resource.js',
-    minified='js/angular-resource.min.js',
-    depends=[angular, ])
 
 angular_ui_css = Resource(
     library,
-    'css/angular-ui.css',
-    minified='css/angular-ui.min.css',
+    'vendor/css/angular-ui.css',
+    minified='vendor/css/angular-ui.min.css',
     depends=[angular, ])
 angular_ui_js = Resource(
     library,
-    'js/angular-ui.js',
-    minified='js/angular-ui.min.js',
+    'vendor/js/angular-ui.js',
+    minified='vendor/js/angular-ui.min.js',
     depends=[angular, ])
 angular_ui = Group([angular_ui_js, angular_ui_css])
 
 angular_bootstrap = Resource(
     library,
-    'js/angular-bootstrap.js',
-    minified='js/angular-bootstrap.min.js',
+    'vendor/js/angular-bootstrap.js',
+    minified='vendor/js/angular-bootstrap.min.js',
     depends=[angular, ])
-
-leaflet = Resource(
-    library,
-    'js/leaflet.css.bundle.js',
-    minified='js/leaflet.css.bundle.min.js'
-)
 
 leaflet_awesome_markers_js = Resource(
     library,
-    'js/leaflet.awesome-markers.js',
-    minified='js/leaflet.awesome-markers.min.js',
+    'vendor/js/leaflet.awesome-markers.js',
+    minified='vendor/js/leaflet.awesome-markers.min.js',
     depends=[leaflet, ]
 )
 leaflet_awesome_markers_css = Resource(
     library,
-    'css/leaflet.awesome-markers.css',
-    minified='css/leaflet.awesome-markers.min.css',
+    'vendor/css/leaflet.awesome-markers.css',
+    minified='vendor/css/leaflet.awesome-markers.min.css',
     depends=[leaflet, ]
 )
 leaflet_awesome_markers = Group(

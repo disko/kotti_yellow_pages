@@ -104,7 +104,7 @@ app.factory "map", ($log, mapquest) ->
   ###
   map.makeIcon = (opts={}) ->
 
-    opts.color ?= 'blue'
+    opts.color ?= 'green'
     opts.icon ?= null
     opts.iconColor ?= 'white'
     opts.spin ?= false

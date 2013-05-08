@@ -115,7 +115,7 @@ app.factory("map", function($log, mapquest) {
       opts = {};
     }
     if ((_ref = opts.color) == null) {
-      opts.color = 'blue';
+      opts.color = 'green';
     }
     if ((_ref1 = opts.icon) == null) {
       opts.icon = null;
