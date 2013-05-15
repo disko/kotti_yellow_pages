@@ -90,9 +90,9 @@ app.factory "mapquest", ($log, $http) ->
 ###
 app.factory "map", ($log, mapquest) ->
 
-  $('#map').height($(window).height() - 40)
+  $('#map').height($('#map').width())
 
-  map = L.map("map", zoomControl: true)
+  map = L.map("map", zoomControl: true, scrollWheelZoom: false)
   mapquest.tileLayer.addTo(map)
 
   map.latLngForAddress = mapquest.latLngForAddress

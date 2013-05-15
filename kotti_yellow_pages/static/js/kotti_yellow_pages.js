@@ -96,9 +96,10 @@ app.factory("mapquest", function($log, $http) {
 app.factory("map", function($log, mapquest) {
   var map;
 
-  $('#map').height($(window).height() - 40);
+  $('#map').height($('#map').width());
   map = L.map("map", {
-    zoomControl: true
+    zoomControl: true,
+    scrollWheelZoom: false
   });
   mapquest.tileLayer.addTo(map);
   map.latLngForAddress = mapquest.latLngForAddress;
