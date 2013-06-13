@@ -18,7 +18,30 @@
     <p i18n:translate="" ng-hide="companies">
       No companies yet.
     </p>
-    <form class="form-vertical row" ng-show="companies">
+
+    <form class="form form-vertical row">
+      <div class="span6">
+        <label class="control-label" i18n:translate="">Ich suche...</label>
+        <div class="control-group">
+          <div class="controls">
+            <div ng-repeat="branch in branches">
+              <input type="checkbox" ng-model="branch.visible"
+                ng-change="updateBranchesVisible()" /> {{ branch.title }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="span6">
+        <div class="control-group">
+          <label class="control-label" i18n:translate="">in der Nähe von</label>
+          <div class="controls">
+            <input type="text" placeholder="PLZ" ng-model="user.zipcode" />
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <form class="form-vertical row hide" ng-show="companies">
       <div class="control-group span6">
         <label class="control-label" i18n:translate="">Sort by</label>
         <div class="controls">
@@ -32,7 +55,7 @@
         <div class="controls" ui-show="listOrderBy=='distanceToZipcode'"
              ui-hide="listOrderBy!='distanceToZipcode'">
           <select ng-model="user.country">
-            <option value="DE">Germany</option>
+            <option value="DE">DE</option>
           </select>
           <input ng-model="user.zipcode" type="text" class="span2" value="47877"
                  placeholder="Zipcode" i18n:attributes="placeholder" />
@@ -48,6 +71,7 @@
         </div>
       </div>
     </form>
+
     <div class="row" ng-show="companies">
       <div class="span6 ng-cloak">
         <table class="table table-hover table-companies">

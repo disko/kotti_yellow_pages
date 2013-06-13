@@ -234,14 +234,6 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
               map.on('zoomend', zoomend)
               map.setZoom(13)
 
-
-              # o = setInterval zoomOut, 500
-              # map.setZoom(13)
-              # while $scope.numCompaniesVisible() > 5
-              #   map.zoomIn()
-              # while $scope.numCompaniesVisible() < 5
-              #   map.zoomOut()
-
   $scope.$watch 'user', $scope.latLngForUser, true
 
   ###*
