@@ -240,6 +240,22 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
     }
     return _results;
   };
+  $scope.numCompaniesVisible = function() {
+    var c;
+
+    return ((function() {
+      var _i, _len, _results;
+
+      _results = [];
+      for (_i = 0, _len = companies.length; _i < _len; _i++) {
+        c = companies[_i];
+        if (c.visible()) {
+          _results.push(c);
+        }
+      }
+      return _results;
+    })()).length;
+  };
   /**
    * Initialize the branch obejcts.
   */
@@ -366,7 +382,20 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
           latlng = location.latLng;
           $scope.user.latlng = new L.LatLng(latlng.lat, latlng.lng);
           if ($scope.listOrderBy = 'distanceToZipcode') {
-            return map.panTo($scope.user.latlng);
+            return $scope.safeApply(function() {
+              var zoomend;
+
+              map.panTo($scope.user.latlng);
+              zoomend = function(e) {
+                if ($scope.numCompaniesVisible() <= 1) {
+                  return map.zoomOut();
+                } else {
+                  return map.off('zoomend', zoomend);
+                }
+              };
+              map.on('zoomend', zoomend);
+              return map.setZoom(13);
+            });
           }
         }
       }

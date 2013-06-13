@@ -148,6 +148,9 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
   $scope.recalcDistances = ->
     (c.distanceToMapCenter() for c in companies when c.distanceToMapCenter)
 
+  $scope.numCompaniesVisible = ->
+    return (c for c in companies when c.visible()).length
+
   ###*
    * Initialize the branch obejcts.
   ###
@@ -217,8 +220,27 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
           location = response[0].locations[0]
           latlng = location.latLng
           $scope.user.latlng = new L.LatLng(latlng.lat, latlng.lng)
+
+          # Zoom to level 13 on zipcode change, then zoom out until at least one
+          # marker is visible.
           if $scope.listOrderBy = 'distanceToZipcode'
-            map.panTo($scope.user.latlng)
+            $scope.safeApply ->
+              map.panTo($scope.user.latlng)
+              zoomend = (e) ->
+                if $scope.numCompaniesVisible() <= 1
+                  map.zoomOut()
+                else
+                  map.off('zoomend', zoomend)
+              map.on('zoomend', zoomend)
+              map.setZoom(13)
+
+
+              # o = setInterval zoomOut, 500
+              # map.setZoom(13)
+              # while $scope.numCompaniesVisible() > 5
+              #   map.zoomIn()
+              # while $scope.numCompaniesVisible() < 5
+              #   map.zoomOut()
 
   $scope.$watch 'user', $scope.latLngForUser, true
 

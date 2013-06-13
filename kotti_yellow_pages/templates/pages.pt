@@ -34,8 +34,8 @@
           <select ng-model="user.country">
             <option value="DE">Germany</option>
           </select>
-	  <input ng-model="user.zipcode" type="text" class="span2" value="47877"
-		 placeholder="Zipcode" i18n:attributes="placeholder" />
+          <input ng-model="user.zipcode" type="text" class="span2" value="47877"
+                 placeholder="Zipcode" i18n:attributes="placeholder" />
         </div>
       </div>
       <div class="control-group span6">
