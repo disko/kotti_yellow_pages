@@ -76,7 +76,21 @@ app.factory "mapquest", ($log, $http) ->
           if response.status != 200
             $log.error("ERROR (status=#{response.status})")
 
-          return response.data.results
+          $log.info(response.data.results)
+
+          # Some of the results (or the locations therein) are obviously wrong.
+          # Discard them and only return those that might match the query.
+          results = []
+          for r in response.data.results
+            pl = r.providedLocation
+            locations = []
+            for l in r.locations
+              if (l.adminArea1 == pl.country) and (l.postalCode == pl.postalCode)
+                locations.push(l)
+            r.locations = locations
+            results.push(r)
+
+          return results
 
       return promise
 

@@ -91,13 +91,19 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
             }
           }
         }
-        if (show && recurse) {
-          _ref2 = $scope.companies;
-          for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-            c = _ref2[_k];
-            if (c !== this) {
-              c.showDetails(false, false);
+        if (recurse) {
+          if (show) {
+            $scope.hideCompaniesTable = true;
+            _ref2 = $scope.companies;
+            for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+              c = _ref2[_k];
+              if (c !== this) {
+                c.showDetails(false, false);
+              }
             }
+          }
+          if (show === false) {
+            $scope.hideCompaniesTable = false;
           }
         }
         return this._showDetails;
@@ -123,15 +129,15 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
         });
         marker.company = company;
         marker.defaultIcon = map.makeIcon({
-          color: 'darkblue',
+          color: 'darkgreen',
           icon: 'question-sign'
         });
         marker.hoverIcon = map.makeIcon({
-          color: 'blue',
+          color: 'green',
           icon: 'info-sign'
         });
         marker.selectedIcon = map.makeIcon({
-          color: 'red',
+          color: 'green',
           icon: 'star'
         });
         marker.setIcon(marker.defaultIcon);
@@ -178,17 +184,6 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
         return anyBranchVisible && inMapBounds;
       };
       /**
-       * Determine the distance to the current center of the map.
-       * @return {int} Distance in km
-      */
-
-      company.distanceToMapCenter = function() {
-        if (!(this.latlng && $scope.mapCenter)) {
-          return this.distance = null;
-        }
-        return this.distance = Math.round(this.latlng.distanceTo($scope.mapCenter) / 1000, 10);
-      };
-      /**
        * Determine the distance to the location provided by the user.
        * @return {int} Distance in km
       */
@@ -201,13 +196,6 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
       });
     }
     return _results;
-  };
-  $scope.distanceToMapCenter = function(company) {
-    if (company.distanceToMapCenter) {
-      return company.distanceToMapCenter();
-    } else {
-      return false;
-    }
   };
   $scope.distanceToZipcode = function(company) {
     if (company.distanceToUser) {
@@ -227,18 +215,6 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
       $scope.listOrderBy = 'companyZipcode';
     }
     return $scope[$scope.listOrderBy](company);
-  };
-  $scope.recalcDistances = function() {
-    var c, _i, _len, _results;
-
-    _results = [];
-    for (_i = 0, _len = companies.length; _i < _len; _i++) {
-      c = companies[_i];
-      if (c.distanceToMapCenter) {
-        _results.push(c.distanceToMapCenter());
-      }
-    }
-    return _results;
   };
   $scope.numCompaniesVisible = function() {
     var c;
@@ -268,6 +244,7 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       branch = _ref[_i];
+      branch.visible = false;
       _results.push(branch.bounds = new L.LatLngBounds((function() {
         var _j, _len1, _ref1, _results1;
 
@@ -293,11 +270,10 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
 
     $log.info("initMap");
     $window.map = $scope.map = map;
-    map.on('load moveend dragend zoomend', function(e) {
+    map.on('load move moveend drag dragend zoomend', function(e) {
       return $scope.safeApply(function() {
         $scope.map.getBounds();
-        $scope.mapCenter = $scope.map.getCenter();
-        return $scope.recalcDistances();
+        return $scope.mapCenter = $scope.map.getCenter();
       });
     });
     map.bounds = new L.LatLngBounds((function() {
@@ -321,6 +297,11 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
     _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       branch = _ref[_i];
+      if (branch.title === $scope.selected_branch) {
+        branch.visible = true;
+      } else {
+        branch.visible = false;
+      }
       _results.push((function() {
         var _j, _len1, _ref1, _results1;
 
@@ -346,6 +327,15 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
     }
     return _results;
   };
+  $scope.$watch('selected_branch', function(selected_branch) {
+    var u;
+
+    u = $scope.user;
+    if (u && u.zipcode && u.zipcode.length === 5) {
+      $scope.updateBranchesVisible();
+      return $scope.maybeShowMap();
+    }
+  });
   branchesInitialized = $q.defer();
   /**
    * Wait for the branches object to appear on the scope, then resolve the
@@ -368,38 +358,68 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
     $window.companies = companies;
     return companiesInitialized.resolve();
   });
+  $scope.panAndZoom = function() {
+    if (!($scope.user && $scope.user.latlng)) {
+      return;
+    }
+    return $scope.safeApply(function() {
+      var zoomend;
+
+      map.panTo($scope.user.latlng);
+      zoomend = function(e) {
+        if ($scope.numCompaniesVisible() <= 1) {
+          return map.zoomOut();
+        } else {
+          return map.off('zoomend', zoomend);
+        }
+      };
+      map.on('zoomend', zoomend);
+      return map.setZoom(13);
+    });
+  };
+  $scope.maybeShowMap = function() {
+    var u;
+
+    u = $scope.user;
+    if (u && u.zipcode && u.zipcode.length === 5 && $scope.selected_branch) {
+      $('.companies_listing').slideDown();
+      $('.company-search').slideUp();
+      $scope.updateBranchesVisible();
+      $scope.panAndZoom();
+      return true;
+    } else {
+      $('.companies_listing').slideUp();
+      $('.company-search').slideDown();
+      return false;
+    }
+  };
+  $scope.newSearch = function() {
+    $scope.selected_branch = '';
+    $scope.user.zipcode = null;
+    $scope.updateBranchesVisible();
+    return $scope.maybeShowMap();
+  };
   $scope.latLngForUser = function() {
     if (!$scope.user || $scope.user.zipcode.length !== 5) {
       $('.companies_listing').slideUp();
+      $('.company-search').slideDown();
       return false;
     }
-    $('.companies_listing').slideDown();
     return map.latLngForAddress($scope.user).then(function(response) {
       var latlng, location, locations;
 
       if (response.length > 0) {
         locations = response[0].locations;
         if (locations.length > 0) {
-          location = response[0].locations[0];
+          location = locations[0];
           latlng = location.latLng;
           $scope.user.latlng = new L.LatLng(latlng.lat, latlng.lng);
-          if ($scope.listOrderBy = 'distanceToZipcode') {
-            return $scope.safeApply(function() {
-              var zoomend;
-
-              map.panTo($scope.user.latlng);
-              zoomend = function(e) {
-                if ($scope.numCompaniesVisible() <= 1) {
-                  return map.zoomOut();
-                } else {
-                  return map.off('zoomend', zoomend);
-                }
-              };
-              map.on('zoomend', zoomend);
-              return map.setZoom(13);
-            });
-          }
+        } else {
+          $scope.user.latlng = null;
+          $scope.user.zipcode = '';
+          alert("Unbekannte PLZ");
         }
+        return $scope.maybeShowMap();
       }
     });
   };
@@ -414,7 +434,7 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
     initCompanies();
     initBranches();
     initMap();
-    $scope.listOrderBy = 'distanceToMapCenter';
+    $scope.listOrderBy = 'distanceToZipcode';
     $window.user = $scope.user = {
       zipcode: '',
       country: 'DE'

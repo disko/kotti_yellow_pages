@@ -15,7 +15,8 @@ from pyramid.view import view_config
 from pyramid.view import view_defaults
 
 from kotti_yellow_pages import _
-from kotti_yellow_pages.fanstatic import pages
+from kotti_yellow_pages.fanstatic import pages_complex
+from kotti_yellow_pages.fanstatic import pages_simple
 from kotti_yellow_pages.resources import YellowPages
 from kotti_yellow_pages.views import BaseView
 
@@ -47,13 +48,15 @@ class YellowPagesEditForm(EditFormView):
 class YellowPagesView(BaseView):
     """View(s) for YellowPages"""
 
-    @view_config(name='view',
-                 renderer='kotti_yellow_pages:templates/pages.pt')
-    def view(self):
+    @property
+    def _branches(self):
+        """ Branches as needed by views.
 
-        pages.need()
+        :result: visible branches
+        :rtype: list of dict
+        """
 
-        branches = [
+        return [
             {
                 "title": b.title,
                 "visible": True,
@@ -61,19 +64,53 @@ class YellowPagesView(BaseView):
             }
             for b in self.context.branches_with_permission(self.request)
         ]
-        companies = [
+
+    @property
+    def _companies(self):
+        """ Companies as needed by views.
+
+        :result: visible companies
+        :rtype: list of dict
+        """
+
+        return [
             c.__json__(self.request) for c in
             self.context.companies_with_permission(self.request)
         ]
 
+    @view_config(name='advanced',
+                 renderer='kotti_yellow_pages:templates/pages-complex.pt')
+    def complex(self):
+        """
+        'Complex' view, showing everything with multiple filter / order options
+        """
+
+        pages_complex.need()
+
         return {
-            'branches_json': json.dumps(branches),
-            'companies_json': json.dumps(companies),
+            'branches_json': json.dumps(self._branches),
+            'companies_json': json.dumps(self._companies),
+        }
+
+    @view_config(name='view',
+                 renderer='kotti_yellow_pages:templates/pages-simple.pt')
+    def view(self):
+        """
+        'Simple' wizard style view, showing max 5 companies, always next to
+        zipcode entered by the user.
+        """
+
+        pages_simple.need()
+
+        return {
+            'branches_json': json.dumps(self._branches),
+            'companies_json': json.dumps(self._companies),
         }
 
     @view_config(name='branches', permission='edit',
                  renderer='kotti:templates/edit/contents.pt')
     def branches(self):
+        """ Filtered contents view for editing """
 
         result = contents(self.context, self.request)
         result['children'] = [c for c in result['children']
@@ -84,6 +121,7 @@ class YellowPagesView(BaseView):
     @view_config(name='companies', permission='edit',
                  renderer='kotti:templates/edit/contents.pt')
     def companies(self):
+        """ Filtered contents view for editing """
 
         result = contents(self.context, self.request)
         result['children'] = [c for c in result['children']

@@ -1,4 +1,4 @@
-.table-companies:hover {
+.table-companies td:last-child:hover {
     cursor: pointer;
 }
 .ui-show {

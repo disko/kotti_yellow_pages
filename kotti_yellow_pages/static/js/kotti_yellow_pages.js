@@ -72,11 +72,30 @@ app.factory("mapquest", function($log, $http) {
       promise = $http.jsonp(base_url, {
         params: params
       }).then(function(response) {
+        var l, locations, pl, r, results, _i, _j, _len, _len1, _ref, _ref1;
+
         $log.info("Received response from MapQuest API endpoint...");
         if (response.status !== 200) {
           $log.error("ERROR (status=" + response.status + ")");
         }
-        return response.data.results;
+        $log.info(response.data.results);
+        results = [];
+        _ref = response.data.results;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          r = _ref[_i];
+          pl = r.providedLocation;
+          locations = [];
+          _ref1 = r.locations;
+          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+            l = _ref1[_j];
+            if ((l.adminArea1 === pl.country) && (l.postalCode === pl.postalCode)) {
+              locations.push(l);
+            }
+          }
+          r.locations = locations;
+          results.push(r);
+        }
+        return results;
       });
       return promise;
     }

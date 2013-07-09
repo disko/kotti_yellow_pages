@@ -73,10 +73,16 @@ kotti_yellow_pages = Resource(
     ]
 )
 
-pages_js = Resource(
+pages_complex_js = Resource(
     library,
-    'js/pages.js',
-    minified='js/pages.min.js',
+    'js/pages-complex.js',
+    minified='js/pages-complex.min.js',
+    depends=[kotti_yellow_pages, ]
+)
+pages_simple_js = Resource(
+    library,
+    'js/pages-simple.js',
+    minified='js/pages-simple.min.js',
     depends=[kotti_yellow_pages, ]
 )
 company_js = Resource(
@@ -99,6 +105,7 @@ css = Resource(
 )
 
 
-pages = Group([pages_js, css, ])
+pages_complex = Group([pages_complex_js, css, ])
+pages_simple = Group([pages_simple_js, css, ])
 company = Group([company_js, css, ])
 company_edit = Group([company_edit_js, css, ])

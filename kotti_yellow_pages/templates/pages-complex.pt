@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:metal="http://xml.zope.org/namespaces/metal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      metal:use-macro="api.macro('kotti:templates/view/master.pt')"
+      i18n:domain="kotti_yellow_pages">
+
+  <script metal:fill-slot="head-more">window.context_url = '${request.resource_url(context)}';</script>
+
+  <article metal:fill-slot="content" class="yp-pages view ng-cloak"
+           ng-app="kotti_yellow_pages" ng-controller="PagesCtrl"
+           ng-init="branches = ${branches_json}; companies = ${companies_json};">
+
+    <h1>
+      ${context.title}
+    </h1>
+    <p class="description">
+      ${context.description}
+    </p>
+    <p i18n:translate="" ng-hide="companies">
+      No companies yet.
+    </p>
+
+    <div>
+      ${api.render_template('kotti_yellow_pages:templates/pages_simpleform.pt')}
+    </div>
+    <div class="hide">
+      ${api.render_template('kotti_yellow_pages:templates/pages_advancedform.pt')}
+    </div>
+
+    <div class="row companies_listing" ng-show="companies">
+      <div class="span6 ng-cloak">
+        ${api.render_template('kotti_yellow_pages:templates/pages_companiestable.pt')}
+      </div>
+      <div class="span6">
+        <div id="map"><!--the map --></div>
+        <div tal:condition="api.has_permission('add_company')">
+          <p></p>
+          <p>
+            <a href="${request.resource_url(context, 'add_yp_company')}"
+               class="btn btn-primary" i18n:translate="">
+              Add your company to this listing
+            </a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </article>
+</html>

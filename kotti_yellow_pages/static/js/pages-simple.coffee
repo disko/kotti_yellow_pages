@@ -44,10 +44,15 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
               @marker.setIcon(@marker.selectedIcon)
             else
               @marker.setIcon(@marker.defaultIcon)
-        if show and recurse
-          for c in $scope.companies
-            if c != @
-              c.showDetails(false, false)
+        if recurse
+          if show
+            $scope.hideCompaniesTable = true
+            for c in $scope.companies
+              if c != @
+                c.showDetails(false, false)
+          if show == false
+            $scope.hideCompaniesTable = false
+
         return @_showDetails
 
       ###*
@@ -69,9 +74,9 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
         marker = new L.marker(company.latlng, title:company.title, riseOnHover:true, riseOffset: 1000)
         marker.company = company
 
-        marker.defaultIcon = map.makeIcon(color:'darkblue', icon:'question-sign')
-        marker.hoverIcon = map.makeIcon(color:'blue', icon:'info-sign')
-        marker.selectedIcon = map.makeIcon(color:'red', icon:'star')
+        marker.defaultIcon = map.makeIcon(color:'darkgreen', icon:'question-sign')
+        marker.hoverIcon = map.makeIcon(color:'green', icon:'info-sign')
+        marker.selectedIcon = map.makeIcon(color:'green', icon:'star')
         marker.setIcon(marker.defaultIcon)
 
         marker.on "click", company.onClick
@@ -105,15 +110,6 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
         return anyBranchVisible and inMapBounds
 
       ###*
-       * Determine the distance to the current center of the map.
-       * @return {int} Distance in km
-      ###
-      company.distanceToMapCenter = ->
-        if not (@latlng and $scope.mapCenter)
-          return @distance = null
-        return @distance = Math.round(@latlng.distanceTo($scope.mapCenter) / 1000, 10)
-
-      ###*
        * Determine the distance to the location provided by the user.
        * @return {int} Distance in km
       ###
@@ -122,12 +118,6 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
           return @distance = null
         return @distance = Math.round(@latlng.distanceTo($scope.user.latlng) / 1000, 10)
 
-  $scope.distanceToMapCenter = (company) ->
-    if company.distanceToMapCenter
-      return company.distanceToMapCenter()
-    else
-      return false
-
   $scope.distanceToZipcode = (company) ->
     if company.distanceToUser
       return company.distanceToUser()
@@ -135,20 +125,21 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
       return false
 
   $scope.companyName = (company) ->
+
     return company.title
 
   $scope.companyZipcode = (company) ->
+
     return company.zipcode
 
   $scope.companyListOrder = (company) ->
+
     if not $scope.listOrderBy
       $scope.listOrderBy = 'companyZipcode'
     return $scope[$scope.listOrderBy](company)
 
-  $scope.recalcDistances = ->
-    (c.distanceToMapCenter() for c in companies when c.distanceToMapCenter)
-
   $scope.numCompaniesVisible = ->
+
     return (c for c in companies when c.visible()).length
 
   ###*
@@ -159,6 +150,7 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
 
     # Put a bounds object on each branch that can contain all of its companies.
     for branch in $scope.branches
+      branch.visible = false
       branch.bounds = new L.LatLngBounds((c.latlng for c in branch.companies when c.latlng))
 
   ###*
@@ -169,11 +161,10 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
     $window.map = $scope.map = map
 
     # Add a handler for all relevant map events.
-    map.on 'load moveend dragend zoomend', (e) ->
+    map.on 'load move moveend drag dragend zoomend', (e) ->
       $scope.safeApply ->
         $scope.map.getBounds()
         $scope.mapCenter = $scope.map.getCenter()
-        $scope.recalcDistances()
 
     # Fit the map to a new bounds object that can contain all branches' bounds.
     map.bounds = new L.LatLngBounds((b.bounds for b in $scope.branches))
@@ -182,14 +173,27 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
   $scope.updateBranchesVisible = ->
     $log.info "updateBranchesVisible"
     for branch in $scope.branches
+      if (branch.title == $scope.selected_branch)
+        branch.visible = true
+      else
+        branch.visible = false
       for company in branch.companies
         if company.marker
           if branch.visible and not map.hasLayer(company.marker)
             map.addLayer(company.marker)
           if not branch.visible and map.hasLayer(company.marker)
               map.removeLayer(company.marker)
+    # $scope.maybeShowMap()
+
+  $scope.$watch 'selected_branch', (selected_branch) ->
+    u = $scope.user
+    if u and u.zipcode and u.zipcode.length == 5
+      $scope.updateBranchesVisible()
+      $scope.maybeShowMap()
+
 
   branchesInitialized = $q.defer()
+
   ###*
    * Wait for the branches object to appear on the scope, then resolve the
    * branchesInitialized promise.
@@ -200,6 +204,7 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
     branchesInitialized.resolve()
 
   companiesInitialized = $q.defer()
+
   ###*
    * Wait for the companies object to appear on the scope, then resolve the
    * companiesInitialized promise.
@@ -209,30 +214,61 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
     $window.companies = companies
     companiesInitialized.resolve()
 
+  $scope.panAndZoom = ->
+    # Zoom to level 13 on zipcode change, then zoom out until at least one
+    # marker is visible.
+    if not ($scope.user and $scope.user.latlng)
+      return
+    $scope.safeApply ->
+      map.panTo($scope.user.latlng)
+      zoomend = (e) ->
+        if $scope.numCompaniesVisible() <= 1
+          map.zoomOut()
+        else
+          map.off('zoomend', zoomend)
+      map.on('zoomend', zoomend)
+      map.setZoom(13)
+
+  $scope.maybeShowMap = ->
+    u = $scope.user
+    if u and u.zipcode and u.zipcode.length == 5 and $scope.selected_branch
+      $('.companies_listing').slideDown()
+      $('.company-search').slideUp()
+      $scope.updateBranchesVisible()
+      $scope.panAndZoom()
+      return true
+    else
+      $('.companies_listing').slideUp()
+      $('.company-search').slideDown()
+      return false
+
+  $scope.newSearch = ->
+    $scope.selected_branch = ''
+    $scope.user.zipcode = null
+    $scope.updateBranchesVisible()
+    $scope.maybeShowMap()
+
   $scope.latLngForUser = ->
+
     # only handles German zipcodes correctly atm
     if not $scope.user or $scope.user.zipcode.length != 5
+      $('.companies_listing').slideUp()
+      $('.company-search').slideDown()
       return false
+
     map.latLngForAddress($scope.user).then (response) ->
       if response.length > 0
         locations = response[0].locations
         if locations.length > 0
-          location = response[0].locations[0]
+          location = locations[0]
           latlng = location.latLng
           $scope.user.latlng = new L.LatLng(latlng.lat, latlng.lng)
+        else
+          $scope.user.latlng = null
+          $scope.user.zipcode = ''
+          alert("Unbekannte PLZ")
 
-          # Zoom to level 13 on zipcode change, then zoom out until at least one
-          # marker is visible.
-          if $scope.listOrderBy = 'distanceToZipcode'
-            $scope.safeApply ->
-              map.panTo($scope.user.latlng)
-              zoomend = (e) ->
-                if $scope.numCompaniesVisible() <= 1
-                  map.zoomOut()
-                else
-                  map.off('zoomend', zoomend)
-              map.on('zoomend', zoomend)
-              map.setZoom(13)
+        $scope.maybeShowMap()
 
   $scope.$watch 'user', $scope.latLngForUser, true
 
@@ -247,7 +283,7 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
     initBranches()
     initMap()
 
-    $scope.listOrderBy = 'distanceToMapCenter'
+    $scope.listOrderBy = 'distanceToZipcode'
     $window.user = $scope.user =
       zipcode: ''
       country: 'DE'

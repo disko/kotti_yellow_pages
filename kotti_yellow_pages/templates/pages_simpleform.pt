@@ -1,0 +1,29 @@
+<form class="form form-vertical row" ng-show="companies"
+  xmlns:tal="http://xml.zope.org/namespaces/tal"
+  xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+  i18n:domain="kotti_yellow_pages">
+  <div class="span6">
+    <label class="control-label" i18n:translate="">
+      Ich suche…
+    </label>
+    <div class="control-group">
+      <div class="controls">
+        <div ng-repeat="branch in branches">
+          <input type="checkbox" ng-model="branch.visible"
+            ng-change="updateBranchesVisible()" />
+            {{ branch.title }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="span6">
+    <div class="control-group">
+      <label class="control-label" i18n:translate="">
+        in der Nähe von
+      </label>
+      <div class="controls">
+        <input type="text" placeholder="PLZ" ng-model="user.zipcode" />
+      </div>
+    </div>
+  </div>
+</form>

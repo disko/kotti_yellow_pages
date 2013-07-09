@@ -1,0 +1,48 @@
+<form ng-show="companies"
+      class="form-vertical row hide"
+      xmlns:tal="http://xml.zope.org/namespaces/tal"
+      xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+      i18n:domain="kotti_yellow_pages">
+  <div class="control-group span6">
+    <label class="control-label" i18n:translate="">Sort by</label>
+    <div class="controls">
+      <select ng-model="listOrderBy">
+        <option value="distanceToMapCenter" i18n:translate="">
+          Distance to map center
+        </option>
+        <option value="distanceToZipcode" i18n:translate="">
+          Distance to zipcode
+        </option>
+        <option value="companyName" i18n:translate="">
+          Company name
+        </option>
+        <option value="companyZipcode" i18n:translate="">
+          Zipcode
+        </option>
+      </select>
+    </div>
+    <div class="controls"
+         ui-show="listOrderBy=='distanceToZipcode'"
+         ui-hide="listOrderBy!='distanceToZipcode'">
+      <select ng-model="user.country">
+        <option value="DE">DE</option>
+      </select>
+      <input ng-model="user.zipcode"
+             type="text" class="span2" value="47877" placeholder="Zipcode"
+             i18n:attributes="placeholder" />
+    </div>
+  </div>
+  <div class="control-group span6">
+    <label class="control-label" i18n:translate="">
+      Show branches
+    </label>
+    <div class="controls" ng-repeat="branch in branches">
+      <label class="checkbox">
+        <input type="checkbox"
+               ng-model="branch.visible"
+               ng-change="updateBranchesVisible()" />
+        {{branch.title}}
+      </label>
+    </div>
+  </div>
+</form>
