@@ -9,7 +9,11 @@
 
   <article metal:fill-slot="content" class="yp-pages view ng-cloak"
            ng-app="kotti_yellow_pages" ng-controller="PagesCtrl"
-           ng-init="branches = ${branches_json}; companies = ${companies_json}; selected_brach = null;">
+           ng-init="
+           branches = ${branches_json};
+           companies = ${companies_json};
+           user = {country: 'DE', zipcode: '${request.GET.get('zipcode', '')}'};
+           selected_branch = '${request.GET.get('selected_branch', '')}';">
 
     <h1>
       ${context.title}

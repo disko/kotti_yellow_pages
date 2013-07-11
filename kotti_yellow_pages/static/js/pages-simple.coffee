@@ -249,7 +249,6 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
     $scope.maybeShowMap()
 
   $scope.latLngForUser = ->
-
     # only handles German zipcodes correctly atm
     if not $scope.user or $scope.user.zipcode.length != 5
       $('.companies_listing').slideUp()
@@ -271,6 +270,9 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
         $scope.maybeShowMap()
 
   $scope.$watch 'user', $scope.latLngForUser, true
+  # $scope.$watch 'selected_branch', ->
+  #   $scope.updateBranchesVisible()
+  #   $log.info "#{$scope.selected_branch}"
 
   ###*
    * Wait for the branchesInitialized and companiesInitialized promises to be
@@ -284,10 +286,5 @@ PagesCtrl = ($scope, $http, $window, $log, $q, map) ->
     initMap()
 
     $scope.listOrderBy = 'distanceToZipcode'
-    $window.user = $scope.user =
-      zipcode: ''
-      country: 'DE'
-
-    $scope.latLngForUser()
 
     $scope.updateBranchesVisible()

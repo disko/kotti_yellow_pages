@@ -435,11 +435,10 @@ PagesCtrl = function($scope, $http, $window, $log, $q, map) {
     initBranches();
     initMap();
     $scope.listOrderBy = 'distanceToZipcode';
-    $window.user = $scope.user = {
-      zipcode: '',
-      country: 'DE'
-    };
-    $scope.latLngForUser();
     return $scope.updateBranchesVisible();
   });
 };
+
+/*
+//@ sourceMappingURL=pages-simple.map
+*/
