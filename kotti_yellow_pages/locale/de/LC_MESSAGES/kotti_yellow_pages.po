@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kotti_yellow_pages 0.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-05-06 17:54+0200\n"
+"POT-Creation-Date: 2013-08-12 13:01+0200\n"
 "PO-Revision-Date: 2013-04-25 12:00+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -26,21 +26,19 @@ msgstr "Ein neuer Eintrag im Branchenverzeichnis wartet auf Freischaltung"
 msgid "Your company is now listed"
 msgstr "Ihr Firma wurde in unser Branchenverzeichnis aufgenommen"
 
-#: kotti_yellow_pages/resources.py:56 kotti_yellow_pages/views/pages.py:34
+#: kotti_yellow_pages/resources.py:56 kotti_yellow_pages/views/pages.py:35
 msgid "Yellow Pages"
 msgstr "Branchenverzeichnis"
 
 #: kotti_yellow_pages/resources.py:61
-#: kotti_yellow_pages/templates/company_edit.pt:42
+#: kotti_yellow_pages/templates/company_edit.pt:43
 #: kotti_yellow_pages/views/company.py:84
 msgid "Branches"
 msgstr "Branchen"
 
 #: kotti_yellow_pages/resources.py:62
-#, fuzzy
-#| msgid "No companies yet."
 msgid "Companies"
-msgstr "Bisher sind keine Firmen eingetragen"
+msgstr "Firmen"
 
 #: kotti_yellow_pages/resources.py:63 kotti_yellow_pages/resources.py:114
 #: kotti_yellow_pages/resources.py:234
@@ -60,19 +58,19 @@ msgid "Yellow Pages Company"
 msgstr "Firma"
 
 #: kotti_yellow_pages/templates/company.pt:19
-#: kotti_yellow_pages/templates/company_edit.pt:140
+#: kotti_yellow_pages/templates/company_edit.pt:150
 #: kotti_yellow_pages/views/company.py:48
 msgid "Telephone"
 msgstr "Telefon"
 
 #: kotti_yellow_pages/templates/company.pt:25
-#: kotti_yellow_pages/templates/company_edit.pt:145
+#: kotti_yellow_pages/templates/company_edit.pt:155
 #: kotti_yellow_pages/views/company.py:51
 msgid "Facsimile"
 msgstr "Telefax"
 
 #: kotti_yellow_pages/templates/company.pt:32
-#: kotti_yellow_pages/templates/company_edit.pt:33
+#: kotti_yellow_pages/templates/company_edit.pt:35
 #: kotti_yellow_pages/views/company.py:70
 msgid "Contact person"
 msgstr "Ansprechpartner"
@@ -85,60 +83,53 @@ msgstr "Web"
 msgid "Email"
 msgstr "Email"
 
-#: kotti_yellow_pages/templates/company_edit.pt:23
+#: kotti_yellow_pages/templates/company_edit.pt:26
 msgid "Company, Contact, Branches"
 msgstr "Firma, Ansprechpartner, Branchen"
 
-#: kotti_yellow_pages/templates/company_edit.pt:26
-#: kotti_yellow_pages/templates/pages.pt:28
+#: kotti_yellow_pages/templates/company_edit.pt:29
+#: kotti_yellow_pages/templates/pages_advancedform.pt:16
 #: kotti_yellow_pages/views/company.py:31
 msgid "Company name"
 msgstr "Firmenname"
 
-#: kotti_yellow_pages/templates/company_edit.pt:59
+#: kotti_yellow_pages/templates/company_edit.pt:64
 #, fuzzy
 msgid "Address"
 msgstr "Email Adresse"
-
-#: kotti_yellow_pages/templates/company_edit.pt:62
-msgid ""
-"Please provide yor company's exact address and click on \"Update marker "
-"position from address\" to set the marker on the map. You can skip this "
-"step if the marker is already positioned accurately."
-msgstr ""
-"Bitte geben Sie die Adresse Ihrer Firma so genau wie möglich ein und "
-"klicken Sie anschließend auf \"Kartenposition aktualisieren.\". Falls "
-"bereits die korrekte Position auf der Karte angezeigt wird, können Sie "
-"diesen Schritt überspringen."
-
-#: kotti_yellow_pages/templates/company_edit.pt:65
+#: kotti_yellow_pages/templates/company_edit.pt:70
 #: kotti_yellow_pages/views/company.py:34
 msgid "Street"
 msgstr "Straße"
 
-#: kotti_yellow_pages/templates/company_edit.pt:71
-#: kotti_yellow_pages/templates/pages.pt:29
-#: kotti_yellow_pages/templates/pages.pt:54
+#: kotti_yellow_pages/templates/company_edit.pt:76
+#: kotti_yellow_pages/templates/pages_advancedform.pt:19
+#: kotti_yellow_pages/templates/pages_advancedform.pt:30
+#: kotti_yellow_pages/templates/pages_companiestable.pt:6
 #: kotti_yellow_pages/views/company.py:37
 msgid "Zipcode"
 msgstr "PLZ"
 
-#: kotti_yellow_pages/templates/company_edit.pt:77
-#: kotti_yellow_pages/templates/pages.pt:55
+#: kotti_yellow_pages/templates/company_edit.pt:82
+#: kotti_yellow_pages/templates/pages_companiestable.pt:7
 #: kotti_yellow_pages/views/company.py:40
 msgid "City"
 msgstr "Ort"
 
-#: kotti_yellow_pages/templates/company_edit.pt:83
+#: kotti_yellow_pages/templates/company_edit.pt:88
 #: kotti_yellow_pages/views/company.py:43
 msgid "Country"
 msgstr "Land"
 
-#: kotti_yellow_pages/templates/company_edit.pt:101
+#: kotti_yellow_pages/templates/company_edit.pt:108
 msgid "Update marker position from address"
 msgstr "Kartenposition aktualisieren"
 
-#: kotti_yellow_pages/templates/company_edit.pt:109
+#: kotti_yellow_pages/templates/company_edit.pt:112
+msgid "Searching..."
+msgstr "Suche..."
+
+#: kotti_yellow_pages/templates/company_edit.pt:116
 msgid ""
 "The search returned no results. Please check the address for errors and "
 "search again after you've corrected them or place the marker yourself."
@@ -147,79 +138,107 @@ msgstr ""
 "Adresse auf mögliche Fehler und klicken Sie ggf. erneut auf "
 "\"Kartenposition aktualisieren\"."
 
-#: kotti_yellow_pages/templates/company_edit.pt:122
+#: kotti_yellow_pages/templates/company_edit.pt:120
+msgid "You can also try to use your browser's geolocation feature."
+msgstr "Sie können auch die Geolokalisierungsfunktion Ihres Browsers benutzen."
+
+#: kotti_yellow_pages/templates/company_edit.pt:126
+msgid ""
+"The marker has been positioned to the location provided by the search "
+"result. You might want want to refine its position by dragging it to the "
+"exact location."
+msgstr "Der Marker wurde entsprechend Ihrer Adresseingabe positioniert. Bitte überprüfen Sie die ermittelte Position und korrigieren Sie sie ggf. indem Sie den Marker an die richtige Stelle auf der Karte ziehen."
+
+#: kotti_yellow_pages/templates/company_edit.pt:131
 msgid ""
 "The search returned multiple results. Please select the most accurate by "
 "clicking on it and optionally drag the map marker to the exact location "
 "of the address you specified above."
 msgstr ""
-"Die Suche lieferte mehrere Ergebnisse. Bitte wählen Sie das passenste aus"
-" und/oder ziehen den Marker ggf. auf die korrekte Position."
+"Die Suche lieferte mehrere Ergebnisse. Bitte wählen Sie das passenste aus und/oder ziehen den Marker ggf. auf die korrekte Position."
 
-#: kotti_yellow_pages/templates/company_edit.pt:136
+#: kotti_yellow_pages/templates/company_edit.pt:145
 msgid "Communication"
 msgstr "Kommunikation"
 
-#: kotti_yellow_pages/templates/company_edit.pt:150
+#: kotti_yellow_pages/templates/company_edit.pt:160
 #: kotti_yellow_pages/views/company.py:57
 msgid "Website URL"
 msgstr "Web URL"
 
-#: kotti_yellow_pages/templates/company_edit.pt:152
+#: kotti_yellow_pages/templates/company_edit.pt:162
 msgid "http://www.company.com/"
 msgstr "http://www.ihre-firma.de/"
 
-#: kotti_yellow_pages/templates/company_edit.pt:156
+#: kotti_yellow_pages/templates/company_edit.pt:167
 #: kotti_yellow_pages/views/company.py:63
 msgid "Email address"
 msgstr "Email Adresse"
 
-#: kotti_yellow_pages/templates/company_edit.pt:158
+#: kotti_yellow_pages/templates/company_edit.pt:169
 msgid "info@company.com"
 msgstr "info@ihre-firma.de"
 
-#: kotti_yellow_pages/templates/company_edit.pt:165
+#: kotti_yellow_pages/templates/company_edit.pt:177
 msgid "Geolocation"
 msgstr "Geokoordinaten"
 
-#: kotti_yellow_pages/templates/company_edit.pt:169
+#: kotti_yellow_pages/templates/company_edit.pt:181
 #: kotti_yellow_pages/views/company.py:76
 msgid "Latitude"
 msgstr "Breitengrad"
 
-#: kotti_yellow_pages/templates/company_edit.pt:175
+#: kotti_yellow_pages/templates/company_edit.pt:186
 #: kotti_yellow_pages/views/company.py:80
 msgid "Longitude"
 msgstr "Längengrad"
 
-#: kotti_yellow_pages/templates/pages.pt:18
-msgid "No companies yet."
-msgstr "Bisher sind keine Firmen eingetragen"
+#: kotti_yellow_pages/templates/company_edit.pt:194
+msgid "Save"
+msgstr "Speichern"
 
-#: kotti_yellow_pages/templates/pages.pt:23
+#: kotti_yellow_pages/templates/company_edit.pt:196
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: kotti_yellow_pages/templates/pages-complex.pt:20
+#: kotti_yellow_pages/templates/pages-simple.pt:24
+msgid "No companies yet."
+msgstr "Bisher sind keine Firmen eingetragen."
+
+#: kotti_yellow_pages/templates/pages-complex.pt:40
+#: kotti_yellow_pages/templates/pages-simple.pt:70
+msgid "Add your company to this listing"
+msgstr "Ihre Firma hinzufügen"
+
+#: kotti_yellow_pages/templates/pages_advancedform.pt:7
 msgid "Sort by"
 msgstr "Sortieren nach"
 
-#: kotti_yellow_pages/templates/pages.pt:26
+#: kotti_yellow_pages/templates/pages_advancedform.pt:10
 msgid "Distance to map center"
 msgstr "Entfernung zur Kartenmitte"
 
-#: kotti_yellow_pages/templates/pages.pt:27
+#: kotti_yellow_pages/templates/pages_advancedform.pt:13
 msgid "Distance to zipcode"
 msgstr "Entfernung zu PLZ..."
 
-#: kotti_yellow_pages/templates/pages.pt:41
+#: kotti_yellow_pages/templates/pages_advancedform.pt:36
 msgid "Show branches"
 msgstr "Branchen anzeigen"
 
-#: kotti_yellow_pages/templates/pages.pt:56
+#: kotti_yellow_pages/templates/pages_companiestable.pt:8
 #: kotti_yellow_pages/views/company.py:121
 msgid "Company"
 msgstr "Firma"
 
-#: kotti_yellow_pages/templates/pages.pt:115
-msgid "Add your company to this listing"
-msgstr "Ihre Firma hinzufügen"
+#: kotti_yellow_pages/templates/pages_simpleform.pt:6
+msgid "Ich suche…"
+msgstr "Ich suche…"
+
+#: kotti_yellow_pages/templates/pages_simpleform.pt:21
+msgid "in der Nähe von"
+msgstr "in der Nähe von"
 
 #: kotti_yellow_pages/views/branch.py:46
 msgid "Branch"

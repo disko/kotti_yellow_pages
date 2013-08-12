@@ -8,7 +8,9 @@
 
   <div metal:fill-slot="content" class="yp-company edit ng-cloak"
        ng-app="kotti_yellow_pages" ng-controller="CompanyEditCtrl">
-    <h1 tal:content="structure first_heading | default">${api.page_title}</h1>
+    <h1 tal:content="structure first_heading | default">
+      ${api.page_title}
+    </h1>
     <div class="row">
       <div class="span6">
         <form class="form-horizontal" name="form" method="POST"
@@ -16,7 +18,8 @@
               action="${request.resource_url(context, request.view_name)}"
               ng-init="company = ${request.company_json}; errors = ${request.company_errors|'{}'};">
 
-          <input type="hidden" name="csrf_token" value="${request.session._csrft_}" />
+          <input type="hidden" name="csrf_token"
+            value="${request.session._csrft_}" />
 
           <fieldset ng-form="companySubform">
             <legend>
@@ -24,17 +27,15 @@
               <i class="icon-ok" ng-show="companySubform.$valid"></i>
             </legend>
             <div control-group="title" title="Company name"
-                 required="true"
-                 i18n:attributes="title">
+                 required="true" i18n:attributes="title">
               <input type="text" name="title" required="required"
                      ng-model="company.title" />
             </div>
 
             <div control-group="contact_person" title="Contact person"
-                 required="false"
-                 i18n:attributes="title">
+                 required="false" i18n:attributes="title">
               <input type="text" name="contact_person"
-                     ng-model="company.contact_person" />
+                ng-model="company.contact_person" />
             </div>
 
             <div class="control-group">
@@ -43,13 +44,17 @@
                 <span class="req">*</span>
               </label>
               <div class="controls">
-                <input type="hidden" name="__start__" value="branches:sequence"/>
-                <label class="checkbox" ng-repeat="branch in company.branches">
-                  <input type="checkbox" name="branches" value="{{branch.title}}"
-                         ng-model="company.branches[$index].selected" />
+                <input type="hidden" name="__start__"
+                  value="branches:sequence"/>
+                <label class="checkbox"
+                  ng-repeat="branch in company.branches">
+                  <input type="checkbox" name="branches"
+                    value="{{branch.title}}"
+                    ng-model="company.branches[$index].selected" />
                   {{branch.title}}
                 </label>
-                <input type="hidden" name="__end__" value="branches:sequence"/>
+                <input type="hidden" name="__end__"
+                  value="branches:sequence"/>
               </div>
             </div>
           </fieldset>
@@ -60,49 +65,51 @@
               <i class="icon-ok" ng-show="addressSubform.$valid"></i>
             </legend>
             <p i18n:translate="">
-              Please provide yor company's exact address and click on "Update marker position from address" to set the marker on the map. You can skip this step if the marker is already positioned accurately.
+              Please provide yor company's exact address and click on Update marker position from address" to set the marker on the map. You can skip this step if the marker is already positioned accurately.
             </p>
-            <div control-group="street" title="Street"
-                 required="true" i18n:attributes="title">
+            <div control-group="street" title="Street" required="true"
+              i18n:attributes="title">
               <input type="text" name="street" required="required"
-                     ng-model="company.address.street" />
+                ng-model="company.address.street" />
             </div>
 
             <div control-group="zipcode" title="Zipcode"
-                 required="true" i18n:attributes="title">
+              required="true" i18n:attributes="title">
               <input type="text" name="zipcode" required="required"
-                     ng-model="company.address.zipcode" />
+                ng-model="company.address.zipcode" />
             </div>
 
             <div control-group="city" title="City"
                  required="true" i18n:attributes="title">
               <input type="text" name="city" required="required"
-                     ng-model="company.address.city" />
+                ng-model="company.address.city" />
             </div>
 
             <div control-group="country" title="Country"
                  required="true" i18n:attributes="title">
-              <!-- TODO: make list of countries available.
-                         -  pycountry api on the backend
-                            -   configurable list of available countries in
-                                addon config
-                         -  http://angular-ui.github.io/#directives-select2 -->
+              <!-- TODO:
+                make list of countries available.
+                  -  pycountry api on the backend
+                  -  configurable list of available countries in
+                     addon config
+                  -  http://angular-ui.github.io/#directives-select2
+              -->
               <select name="country" required="required"
-                      ng-model="company.address.country">
+                ng-model="company.address.country">
                 <option value="DE">Deutschland</option>
               </select>
             </div>
 
-            <!-- TODO: make the toggle animated.
-                       https://github.com/angular-ui/bootstrap/tree/master/src/collapse -->
-            <div class="form-actions"
-                 ng-show="addressSubform.$valid"
-                 collapse="isCollapsed">
+            <!-- TODO:
+              make the toggle animated.
+              https://github.com/angular-ui/bootstrap/tree/master/src/collapse -->
+            <div class="form-actions" ng-show="addressSubform.$valid"
+              collapse="isCollapsed">
               <a class="btn" i18n:translate="" ng-click="locateAddress()">
                 Update marker position from address
               </a>
             </div>
-            <div class="form-actions spinner" ng-show="search.status=='inProgress'">
+            <div class="form-actions spinner" ng-show="search.status=='inProgress'" i18n:translate="">
               Searching...
             </div>
             <div class="form-actions" ng-show="search.status=='noResult'">
@@ -110,12 +117,14 @@
                 The search returned no results. Please check the address for errors and search again after you've corrected them or place the marker yourself.
               </p>
               <p ng-show="browserSupportsGeolocation">
-                <a href="" ng-click="invokeNavigatorGeoLocation()">
+                <a href="" ng-click="invokeNavigatorGeoLocation()"
+                  i18n:translate="">
                   You can also try to use your browser's geolocation feature.
                 </a>
               </p>
             </div>
-            <div class="form-actions" ng-show="search.status=='singleResult'">
+            <div class="form-actions" i18n:translate=""
+              ng-show="search.status=='singleResult'">
               The marker has been positioned to the location provided by the search result. You might want want to refine its position by dragging it to the exact location.
             </div>
             <div class="form-actions" ng-show="search.status=='multipleResults'">
@@ -134,30 +143,33 @@
           <fieldset ng-form="communicationSubform">
             <legend>
               <span i18n:translate="">Communication</span>
-              <i class="icon-ok" ng-show="communicationSubform.$valid"></i>
+              <i class="icon-ok"
+                ng-show="communicationSubform.$valid"></i>
             </legend>
 
             <div control-group="telephone" title="Telephone"
-                 required="true" i18n:attributes="title">
+              required="true" i18n:attributes="title">
               <input type="text" name="telephone" required="required"
-                     ng-model="company.telephone" />
+                ng-model="company.telephone" />
             </div>
             <div control-group="facsimile" title="Facsimile"
-                 required="false" i18n:attributes="title">
+              required="false" i18n:attributes="title">
               <input type="text" name="facsimile"
-                     ng-model="company.facsimile" />
+                ng-model="company.facsimile" />
             </div>
             <div control-group="url" title="Website URL"
-                 i18n:attributes="title">
-              <input type="url" name="url" placeholder="http://www.company.com/"
-                     i18n:attributes="placeholder"
-                     ng-model="company.url" />
+              i18n:attributes="title">
+              <input type="url" name="url"
+                placeholder="http://www.company.com/"
+                i18n:attributes="placeholder"
+                ng-model="company.url" />
             </div>
             <div control-group="email" title="Email address"
-                 i18n:attributes="title">
-              <input type="email" name="email" placeholder="info@company.com"
-                     i18n:attributes="placeholder"
-                     ng-model="company.email" />
+              i18n:attributes="title">
+              <input type="email" name="email"
+                placeholder="info@company.com"
+                i18n:attributes="placeholder"
+                ng-model="company.email" />
             </div>
           </fieldset>
 
@@ -167,29 +179,30 @@
             </legend>
 
             <div control-group="lat" title="Latitude"
-                 required="true" i18n:attributes="title">
-              <input type="text" name="lat"
-                     required="required"
-                     ng-model="company.location.lat" />
+              required="true" i18n:attributes="title">
+              <input type="text" name="lat" required="required"
+                ng-model="company.location.lat" />
             </div>
             <div control-group="lng" title="Longitude"
-                 required="true" i18n:attributes="title">
-              <input type="text" name="lng"
-                     required="required"
-                     ng-model="company.location.lng" />
+              required="true" i18n:attributes="title">
+              <input type="text" name="lng" required="required"
+                ng-model="company.location.lng" />
             </div>
           </fieldset>
 
           <div class="form-actions">
-            <button class="btn btn-primary" type="submit" name="save" value="save">Save</button>
-            <button class="btn" type="submit" name="cancel" value="cancel">Cancel</button>
+            <button class="btn btn-primary" type="submit" name="save"
+              value="save" i18n:translate="">Save</button>
+            <button class="btn" type="submit" name="cancel"
+              value="cancel" i18n:translate="">Cancel</button>
           </div>
         </form>
       </div>
-
-      <!-- TODO: add scrollfix
-                 (e.g. http://angular-ui.github.io/#directives-scrollfix
-                 or Twitter Bootstrap's affix JS) -->
+      <!-- TODO:
+        add scrollfix
+        (e.g. http://angular-ui.github.io/#directives-scrollfix
+        or Twitter Bootstrap's affix JS)
+      -->
       <div class="span6">
         <div id="map"><!-- the map widget --></div>
       </div>
