@@ -29,10 +29,13 @@
       <div class="span6 ng-cloak">
         <form class="form form-horizontal well company-search"
           ng-show="companies">
-          <input type="hidden" ng-model="listOrderBy" value="distanceToZipcode" />
+          <input type="hidden" ng-model="listOrderBy"
+            value="distanceToZipcode" />
           <input type="hidden" ng-model="user.country" value="DE" />
           <div class="control-group">
-            <label class="control-label">Ich suche…</label>
+            <label class="control-label" i18n:translate="">
+              Ich suche…
+            </label>
             <div class="controls">
               <label class="radio" ng-repeat="branch in branches">
                 <input type="radio" value="{{branch.title}}"
@@ -42,7 +45,9 @@
             </div>
           </div>
           <div class="control-group">
-            <label class="control-label">in der Nähe von</label>
+            <label class="control-label">
+              in der Nähe von
+            </label>
             <div class="controls">
               <div class="input-prepend">
                 <span class="add-on">DE</span><input class="span2" type="text" placeholder="PLZ" ng-model="user.zipcode" />
@@ -61,11 +66,12 @@
           </h3>
           ${api.render_template('kotti_yellow_pages:templates/pages_companiestable.pt')}
         </div>
-      </div>
-      <div class="span6">
-        <div id="map"><!--the map --></div>
+
         <div tal:condition="api.has_permission('add_company')">
-          <p></p>
+          <h2 i18n:translate="">Add Company</h2>
+          <p i18n:translate="">
+            Sie wollen mit Ihrer Firma auch in unserem Kooperationspartner-Verzeichnis vertreten sein? Klicken Sie auf "Ihre Firma hinzufügen" und füllen Sie das Formular vollständig aus. Bitte beachten Sie, dass wir jeden Eintrag manuell sichten und keine Gewähr für die Aufnahme in das Verzeichnis geben können.
+          </p>
           <p>
             <a href="${request.resource_url(context, 'add_yp_company')}"
                class="btn btn-primary" i18n:translate="">
@@ -73,6 +79,10 @@
             </a>
           </p>
         </div>
+
+      </div>
+      <div class="span6">
+        <div id="map"><!--the map --></div>
       </div>
     </div>
   </article>

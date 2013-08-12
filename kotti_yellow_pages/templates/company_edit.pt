@@ -8,8 +8,8 @@
 
   <div metal:fill-slot="content" class="yp-company edit ng-cloak"
        ng-app="kotti_yellow_pages" ng-controller="CompanyEditCtrl">
-    <h1 tal:content="structure first_heading | default">
-      ${api.page_title}
+    <h1 i18n:translate="">
+      Ihre Firma in das Kooperationspartner-Verzeichnis eintragen
     </h1>
     <div class="row">
       <div class="span6">
@@ -109,10 +109,11 @@
                 Update marker position from address
               </a>
             </div>
-            <div class="form-actions spinner" ng-show="search.status=='inProgress'" i18n:translate="">
+            <div class="spinner" ng-show="search.status=='inProgress'"
+              i18n:translate="">
               Searching...
             </div>
-            <div class="form-actions" ng-show="search.status=='noResult'">
+            <div ng-show="search.status=='noResult'">
               <p i18n:translate="">
                 The search returned no results. Please check the address for errors and search again after you've corrected them or place the marker yourself.
               </p>
@@ -123,11 +124,11 @@
                 </a>
               </p>
             </div>
-            <div class="form-actions" i18n:translate=""
+            <div i18n:translate=""
               ng-show="search.status=='singleResult'">
               The marker has been positioned to the location provided by the search result. You might want want to refine its position by dragging it to the exact location.
             </div>
-            <div class="form-actions" ng-show="search.status=='multipleResults'">
+            <div ng-show="search.status=='multipleResults'">
               <p i18n:translate="">
                 The search returned multiple results. Please select the most accurate by clicking on it and optionally drag the map marker to the exact location of the address you specified above.
               </p>

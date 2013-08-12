@@ -120,8 +120,8 @@ class Add(AddFormView, YPCompanyForm):
     add = YPCompany
     item_type = _(u"Company")
     success_message = _(
-        u"Your company has been submitted, but won't be visible until it has " +
-        u"been approved by an editor. If you provided an email address, you " +
+        u"Your company has been submitted, but won't be visible until it has "
+        u"been approved by an editor. If you provided an email address, you "
         u"will be notified upon publishing.")
 
     def __init__(self, context, request, **kwargs):
