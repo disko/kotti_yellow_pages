@@ -5,5 +5,5 @@
   <include package="kotti_yellow_pages" file="workflow/branch.xml"/>
   <include package="kotti_yellow_pages" file="workflow/company.xml"/>
   <include package="kotti_yellow_pages" file="workflow/pages.xml"/>
-  <include package="kotti" file="workflow.zcml"/>
+  <!-- <include package="kotti" file="workflow.zcml"/> -->
 </configure>
