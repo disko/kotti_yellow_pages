@@ -32,7 +32,7 @@ def on_company_insert(event):
     wf = get_workflow(event.object)
 
     if has_permission('state_change', event.object, event.request):
-        wf.transition(event.object, event.request, 'created_to_published')
+        wf.transition(event.object, event.request, 'created_to_public')
     elif has_permission('submit', event.object, event.request):
         wf.transition(event.object, event.request, 'created_to_pending')
     else:
