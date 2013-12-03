@@ -193,7 +193,7 @@
 
           <div class="form-actions">
             <button class="btn btn-primary" type="submit" name="save"
-              value="save" i18n:translate="">Save</button>
+              value="save" i18n:translate="">Jetzt eintragen</button>
             <button class="btn" type="submit" name="cancel"
               value="cancel" i18n:translate="">Cancel</button>
           </div>

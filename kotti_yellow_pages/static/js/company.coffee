@@ -21,4 +21,3 @@ CompanyCtrl = ($scope, map) ->
   $scope.$watch 'lng', ->
     if $scope.lat
       initMap()
-
