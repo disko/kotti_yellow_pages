@@ -68,9 +68,9 @@
         </div>
 
         <div tal:condition="api.has_permission('add_company')">
-          <h2 i18n:translate="">Add Company</h2>
+          <h2 i18n:translate="">Kooperationspartner werden</h2>
           <p i18n:translate="">
-            Sie wollen mit Ihrer Firma auch in unserem Kooperationspartner-Verzeichnis vertreten sein? Klicken Sie auf "Ihre Firma hinzufügen" und füllen Sie das Formular vollständig aus. Bitte beachten Sie, dass wir jeden Eintrag manuell sichten und keine Gewähr für die Aufnahme in das Verzeichnis geben können.
+            Sie wollen mit Ihrer Firma auch in unserem Kooperationspartner-Verzeichnis vertreten sein?
           </p>
           <p>
             <a href="${request.resource_url(context, 'add_yp_company')}"

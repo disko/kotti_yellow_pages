@@ -13,6 +13,9 @@
     </h1>
     <div class="row">
       <div class="span6">
+        <p>
+          Sie wollen mit Ihrer Firma auch in unserem Kooperationspartner-Verzeichnis vertreten sein? Füllen Sie das Formular vollständig aus. Bitte beachten Sie, dass wir jeden Eintrag manuell sichten und keine Gewähr für die Aufnahme in das Verzeichnis geben können.
+        </p>
         <form class="form-horizontal" name="form" method="POST"
               enctype="multipart/form-data" accept-charset="utf-8"
               action="${request.resource_url(context, request.view_name)}"
